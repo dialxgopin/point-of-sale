@@ -1,0 +1,12 @@
+<app-data-table>
+    <tr headers>
+        <th>Identifier</th>
+        <th>Name</th>
+        <th>Price</th>
+    </tr>
+    <tr *ngFor="let installment of installmentsData; let i = index" rows>
+        <td><input type="number" [(ngModel)]="installment.identifier"></td>
+        <td><input type="text" [(ngModel)]="installment.name"></td>
+        <td><input type="number" [(ngModel)]="installment.price"></td>
+    </tr>
+</app-data-table>
