@@ -33,7 +33,7 @@ export class IndexedDBService {
 
   private createStore(event: any) {
     const db = event.target.result;
-    db.createObjectStore(this.storeName, { keyPath: 'identifier' });
+    db.createObjectStore(this.storeName, { keyPath: 'id' });
   }
 
   saveData(data: any[]): Promise<void> {

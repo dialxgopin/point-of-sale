@@ -1,4 +1,4 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { IndexedDBService } from './indexed-db.service';
 
@@ -30,7 +30,7 @@ describe('IndexedDBService', () => {
 
   it('should resolve promise to save data to indexedDB', (done: DoneFn) => {
     service.setDatabaseAndStore('testDB', 'testStore');
-    service.saveData([{ identifier: 1, name: 'Item 1' }])
+    service.saveData([{ id: '1', name: 'Item 1' }])
       .then(() => {
         expect(true).toBeTruthy(); // Should check the data is in the database when the method to query is created
         done();
@@ -55,6 +55,6 @@ describe('IndexedDBService', () => {
     service.setDatabaseAndStore(dbName, storeName);
     service['createStore'](mockEvent);
 
-    expect(mockEvent.target.result.createObjectStore).toHaveBeenCalledWith(storeName, { keyPath: 'identifier' });
+    expect(mockEvent.target.result.createObjectStore).toHaveBeenCalledWith(storeName, { keyPath: 'id' });
   });
 });

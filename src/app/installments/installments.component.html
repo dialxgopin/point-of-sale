@@ -5,8 +5,9 @@
         <th>Price</th>
     </tr>
     <tr *ngFor="let installment of installmentsData; let i = index" rows>
-        <td><input type="number" [(ngModel)]="installment.identifier"></td>
-        <td><input type="text" [(ngModel)]="installment.name"></td>
-        <td><input type="number" [(ngModel)]="installment.price"></td>
+        <td><input name="identifier" type="text" [(ngModel)]="installment.identifier" (ngModelChange)="saveRow(i)"></td>
+        <td><input name="name" type="text" [(ngModel)]="installment.name" (ngModelChange)="saveRow(i)"></td>
+        <td><input name="price" type="number" [(ngModel)]="installment.price" (ngModelChange)="saveRow(i)"></td>
     </tr>
 </app-data-table>
+<button (click)="addRow()">Add Row</button>
