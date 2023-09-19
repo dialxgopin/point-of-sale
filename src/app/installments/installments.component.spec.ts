@@ -48,4 +48,20 @@ describe('InstallmentsComponent', () => {
       done();
     });
   });
+
+  it('should add a new row', () => {
+    const initialRowCount = component.installmentsData.length;
+    component.addRow();
+    const finalRowCount = component.installmentsData.length;
+    expect(finalRowCount).toBeGreaterThan(initialRowCount);
+    const addedRow = component.installmentsData[finalRowCount - 1];
+    expect(addedRow.id).toBeTruthy();
+  });
+
+  it('should save a row when identifier is present', () => {
+    const index = 0;
+    component.installmentsData[index].identifier = 'some-identifier';
+    component.saveRow(index);
+    expect(indexedDBServiceSpy.saveData).toHaveBeenCalledWith([component.installmentsData[index]]);
+  });
 });
