@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FiltersService } from './filters.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'point-of-sale';
+
+  constructor(private filtersService: FiltersService) { }
+
+  handleDateSelected(selectedDate: Date) {
+    this.filtersService.setDate(selectedDate);
+  }
 }
