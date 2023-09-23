@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DataTableComponent } from './data-table/data-table.component';
@@ -13,6 +12,7 @@ import { DatepickerComponent } from './datepicker/datepicker.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { SalesComponent } from './sales/sales.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +20,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     DataTableComponent,
     InstallmentsComponent,
     TabsComponent,
-    DatepickerComponent
+    DatepickerComponent,
+    SalesComponent
   ],
   imports: [
     BrowserModule,

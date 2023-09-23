@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { IndexedDBService } from '../indexed-db.service';
 import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
 import { Subscription } from 'rxjs';
+import { Database } from '../database';
 
 interface Installment {
   id: string;
@@ -24,30 +24,23 @@ export class InstallmentsComponent {
 
   private dbName = 'installmentsDB';
   private storeName = 'installmentsStore';
+  private database: Database;
 
   subscription: Subscription;
   tableDate: Date = new Date();
 
-  constructor(private indexedDBService: IndexedDBService,
-    private filtersService: FiltersService) {
+  constructor(private filtersService: FiltersService) {
     this.subscription = this.filtersService.tableDate$.subscribe(
       date => {
         this.tableDate = date;
       }
     );
-    this.indexedDBService.setDatabaseAndStore(this.dbName, this.storeName);
-  }
-
-  ngOnInit(): void {
-    this.saveToIndexedDB();
+    this.database = new Database();
+    this.database.setDatabaseAndStore(this.dbName, this.storeName);
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-  }
-
-  saveToIndexedDB() {
-    this.indexedDBService.saveData(this.installmentsData);
   }
 
   addRow() {
@@ -57,7 +50,7 @@ export class InstallmentsComponent {
 
   saveRow(index: number) {
     if (this.installmentsData[index].identifier) {
-      this.indexedDBService.saveData([this.installmentsData[index]]);
+      this.database.saveData([this.installmentsData[index]]);
     }
   }
 }

@@ -6,6 +6,7 @@ import { InstallmentsComponent } from '../installments/installments.component';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
+import { SalesComponent } from '../sales/sales.component';
 
 describe('TabsComponent', () => {
   let component: TabsComponent;
@@ -13,8 +14,17 @@ describe('TabsComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [TabsComponent, InstallmentsComponent, DataTableComponent],
-      imports: [MatTabsModule, BrowserAnimationsModule, FormsModule]
+      declarations: [
+        TabsComponent,
+        InstallmentsComponent,
+        DataTableComponent,
+        SalesComponent
+      ],
+      imports: [
+        MatTabsModule,
+        BrowserAnimationsModule,
+        FormsModule
+      ]
     });
     fixture = TestBed.createComponent(TabsComponent);
     component = fixture.componentInstance;

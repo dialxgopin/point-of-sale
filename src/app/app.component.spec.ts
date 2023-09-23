@@ -9,18 +9,25 @@ import { DatepickerComponent } from './datepicker/datepicker.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { FiltersService } from './filters.service';
+import { SalesComponent } from './sales/sales.component';
 
 describe('AppComponent', () => {
   let filtersService: FiltersService;
 
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [RouterTestingModule, MatTabsModule, MatDatepickerModule, MatNativeDateModule],
+    imports: [
+      RouterTestingModule,
+      MatTabsModule,
+      MatDatepickerModule,
+      MatNativeDateModule
+    ],
     declarations: [
       AppComponent,
       InstallmentsComponent,
       DataTableComponent,
       TabsComponent,
-      DatepickerComponent
+      DatepickerComponent,
+      SalesComponent
     ],
     providers: [FiltersService]
   }));
