@@ -2,58 +2,47 @@ import { Database } from './database';
 
 describe('Database', () => {
   let database: Database;
+  const dbName = 'testDB';
+  const storeName = 'testStore';
 
   beforeEach(() => {
     database = new Database();
+    database.setDatabaseAndStore(dbName, storeName);
   });
 
-  it('should be created', () => {
-    expect(database).toBeTruthy();
-  });
+  afterEach((done) => {
+    const request = window.indexedDB.deleteDatabase(dbName);
 
-  it('should set database and store names', () => {
-    database.setDatabaseAndStore('testDB', 'testStore');
-    expect(database['dbName']).toEqual('testDB');
-    expect(database['storeName']).toEqual('testStore');
-  });
-
-  it('should open and resolve the database', (done: DoneFn) => {
-    database.setDatabaseAndStore('testDB', 'testStore');
-    database.openDB().then(db => {
-      expect(db).toBeTruthy();
+    request.onsuccess = () => {
       done();
-    });
-  });
-
-  it('should resolve promise to save data to indexedDB', (done: DoneFn) => {
-    database.setDatabaseAndStore('testDB', 'testStore');
-    const testData = [{ id: '1', name: 'Item 1' }];
-    database.saveData(testData)
-      .then(() => {
-        // You can add a test here to check if the data is in the database when the method to query is created
-        expect(true).toBeTruthy();
-        done();
-      })
-      .catch(() => {
-        fail('Failed to save data');
-        done();
-      });
-  });
-
-  it('should create object store', () => {
-    const dbName = 'testDB';
-    const storeName = 'testStore';
-    const mockEvent: any = {
-      target: {
-        result: {
-          createObjectStore: jasmine.createSpy()
-        }
-      }
     };
 
-    database.setDatabaseAndStore(dbName, storeName);
-    database['createStore'](mockEvent);
+    request.onerror = (event) => {
+      console.error('Error deleting database:', (event.target as any).error);
+      done();
+    };
+  });
 
-    expect(mockEvent.target.result.createObjectStore).toHaveBeenCalledWith(storeName, { keyPath: 'id' });
+  it('should save and query data by date', (done) => {
+    const startDate = new Date('2023-01-01');
+    const endDate = new Date('2023-12-31');
+
+    const testData = [
+      { id: 1, date: new Date('2023-05-01') },
+      { id: 2, date: new Date('2023-07-15') },
+      { id: 3, date: new Date('2023-10-30') },
+    ];
+
+    database.openDB().then(() => {
+      database.saveData(testData).then(() => {
+        database.queryByDate(startDate, endDate).then((results) => {
+          expect(results.length).toBe(3);
+          done();
+        }).catch((error) => {
+          fail('Failed to query data by date: ' + error);
+          done();
+        });
+      });
+    });
   });
 });

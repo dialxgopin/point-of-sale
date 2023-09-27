@@ -1,36 +1,36 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { SalesComponent } from './sales.component';
-import { FormsModule } from '@angular/forms';
 import { FiltersService } from '../filters.service';
+import { Database } from '../database';
 import { DataTableComponent } from '../data-table/data-table.component';
 
 describe('SalesComponent', () => {
   let component: SalesComponent;
   let fixture: ComponentFixture<SalesComponent>;
   let filtersService: FiltersService;
+  let database: Database;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [SalesComponent, DataTableComponent],
-      imports: [FormsModule],
       providers: [FiltersService],
     });
 
     fixture = TestBed.createComponent(SalesComponent);
     component = fixture.componentInstance;
     filtersService = TestBed.inject(FiltersService);
-    fixture.detectChanges();
-  });
+    database = new Database();
+    spyOn(database, 'setDatabaseAndStore');
+    spyOn(database, 'saveData').and.returnValue(Promise.resolve());
 
-  afterEach(() => {
-    component.subscription.unsubscribe();
+    component.ngOnInit();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call database.saveData method during addRow', () => {
+  it('should add a new row', () => {
     const initialRowCount = component.salesData.length;
     component.addRow();
     const finalRowCount = component.salesData.length;
@@ -45,4 +45,16 @@ describe('SalesComponent', () => {
     component.saveRow(index);
     expect(component.salesData).toContain(component.salesData[index]);
   });
+
+  it('should refresh sales data from database on table date change', fakeAsync(() => {
+    const newDate = new Date('2023-09-01');
+    filtersService.setDate(newDate);
+    tick();
+    expect(component.tableDate).toEqual(newDate);
+    const startDate = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+    const endDate = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate() + 1);
+    component.refreshSalesDataFromDatabase();
+    tick();
+    expect(component.salesData).not.toEqual([]);
+  }));
 });

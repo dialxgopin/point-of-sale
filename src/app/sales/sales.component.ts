@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
-import { Subscription } from 'rxjs';
 import { Database } from '../database';
 
 interface Sale {
@@ -39,22 +38,20 @@ export class SalesComponent {
   private dbName = 'salesDB';
   private storeName = 'salesStore';
   private database: Database;
-
-  subscription: Subscription;
   tableDate: Date = new Date();
 
   constructor(private filtersService: FiltersService) {
-    this.subscription = this.filtersService.tableDate$.subscribe(
-      date => {
-        this.tableDate = date;
-      }
-    );
     this.database = new Database();
     this.database.setDatabaseAndStore(this.dbName, this.storeName);
   }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+  ngOnInit() {
+    this.filtersService.tableDate$.subscribe(
+      date => {
+        this.tableDate = date;
+        this.refreshSalesDataFromDatabase();
+      }
+    );
   }
 
   addRow() {
@@ -76,5 +73,24 @@ export class SalesComponent {
     if (this.salesData[index].identifier) {
       this.database.saveData([this.salesData[index]]);
     }
+  }
+
+  refreshSalesDataFromDatabase() {
+    const startDate = new Date(
+      this.tableDate.getFullYear(),
+      this.tableDate.getMonth(),
+      this.tableDate.getDate()
+    );
+    const endDate = new Date(
+      this.tableDate.getFullYear(),
+      this.tableDate.getMonth(),
+      this.tableDate.getDate() + 1
+    );
+
+    this.database.queryByDate(startDate, endDate).then((results) => {
+      this.salesData = results as Sale[];
+    }).catch((error) => {
+      console.error('Error:', error);
+    });
   }
 }

@@ -21,14 +21,14 @@ export class Database {
             };
 
             request.onupgradeneeded = (event) => {
-                this.createStore(event);
+                this.createStore((event.target as any).result);
             };
         });
     }
 
-    private createStore(event: any) {
-        const db = event.target.result;
-        db.createObjectStore(this.storeName, { keyPath: 'id' });
+    private createStore(db: IDBDatabase) {
+        const store = db.createObjectStore(this.storeName, { keyPath: 'id' });
+        store.createIndex('date', 'date', { unique: false });
     }
 
     saveData(data: any[]): Promise<void> {
@@ -43,6 +43,35 @@ export class Database {
             return new Promise((resolve) => {
                 transaction.oncomplete = () => {
                     resolve();
+                };
+            });
+        });
+    }
+
+    queryByDate(startDate: Date, endDate: Date): Promise<any[]> {
+        return this.openDB().then((db) => {
+            return new Promise<any[]>((resolve, reject) => {
+                const transaction = db.transaction(this.storeName, 'readonly');
+                const store = transaction.objectStore(this.storeName);
+                const index = store.index('date');
+
+                const range = IDBKeyRange.bound(startDate, endDate, false, true);
+                const request = index.openCursor(range);
+
+                const results: any[] = [];
+
+                request.onsuccess = (event) => {
+                    const cursor = (event.target as IDBRequest).result as IDBCursorWithValue;
+                    if (cursor) {
+                        results.push(cursor.value);
+                        cursor.continue();
+                    } else {
+                        resolve(results);
+                    }
+                };
+
+                request.onerror = (event) => {
+                    reject('Error querying data: ' + (event.target as any).error);
                 };
             });
         });

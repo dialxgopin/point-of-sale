@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { InstallmentsComponent } from './installments.component';
 import { FormsModule } from '@angular/forms';
 import { FiltersService } from '../filters.service';
@@ -22,15 +22,11 @@ describe('InstallmentsComponent', () => {
     fixture.detectChanges();
   });
 
-  afterEach(() => {
-    component.subscription.unsubscribe();
-  });
-
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call database.saveData method during addRow', () => {
+  it('should add a new row', () => {
     const initialRowCount = component.installmentsData.length;
     component.addRow();
     const finalRowCount = component.installmentsData.length;
@@ -45,4 +41,16 @@ describe('InstallmentsComponent', () => {
     component.saveRow(index);
     expect(component.installmentsData).toContain(component.installmentsData[index]);
   });
+
+  it('should refresh sales data from database on table date change', fakeAsync(() => {
+    const newDate = new Date('2023-09-01');
+    filtersService.setDate(newDate);
+    tick();
+    expect(component.tableDate).toEqual(newDate);
+    const startDate = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+    const endDate = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate() + 1);
+    component.refreshInstallmentsDataFromDatabase();
+    tick();
+    expect(component.installmentsData).not.toEqual([]);
+  }));
 });

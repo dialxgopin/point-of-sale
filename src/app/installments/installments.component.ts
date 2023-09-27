@@ -26,21 +26,20 @@ export class InstallmentsComponent {
   private storeName = 'installmentsStore';
   private database: Database;
 
-  subscription: Subscription;
   tableDate: Date = new Date();
 
   constructor(private filtersService: FiltersService) {
-    this.subscription = this.filtersService.tableDate$.subscribe(
-      date => {
-        this.tableDate = date;
-      }
-    );
     this.database = new Database();
     this.database.setDatabaseAndStore(this.dbName, this.storeName);
   }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+  ngOnInit() {
+    this.filtersService.tableDate$.subscribe(
+      date => {
+        this.tableDate = date;
+        this.refreshInstallmentsDataFromDatabase();
+      }
+    );
   }
 
   addRow() {
@@ -52,5 +51,24 @@ export class InstallmentsComponent {
     if (this.installmentsData[index].identifier) {
       this.database.saveData([this.installmentsData[index]]);
     }
+  }
+
+  refreshInstallmentsDataFromDatabase() {
+    const startDate = new Date(
+      this.tableDate.getFullYear(),
+      this.tableDate.getMonth(),
+      this.tableDate.getDate()
+    );
+    const endDate = new Date(
+      this.tableDate.getFullYear(),
+      this.tableDate.getMonth(),
+      this.tableDate.getDate() + 1
+    );
+
+    this.database.queryByDate(startDate, endDate).then((results) => {
+      this.installmentsData = results as Installment[];
+    }).catch((error) => {
+      console.error('Error:', error);
+    });
   }
 }
