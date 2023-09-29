@@ -51,4 +51,14 @@ describe('InstallmentsComponent', () => {
     tick();
     expect(component.installmentsData).not.toEqual([]);
   }));
+
+  it('should calculate the total price correctly', () => {
+    const mockInstallments: any[] = [
+      { id: '1', identifier: 'ID1', name: 'Item 1', price: 100, date: new Date() },
+      { id: '2', identifier: 'ID2', name: 'Item 2', price: 50, date: new Date() },
+    ];
+    component.installmentsData = mockInstallments;
+    component.calculateTotal();
+    expect(component.installmentsTotal.price).toEqual(150);
+  });
 });

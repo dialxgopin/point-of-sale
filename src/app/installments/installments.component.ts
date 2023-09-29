@@ -11,6 +11,10 @@ interface Installment {
   date: Date;
 }
 
+interface InstallmentTotal {
+  price: number;
+}
+
 @Component({
   selector: 'app-installments',
   templateUrl: './installments.component.html',
@@ -20,6 +24,10 @@ export class InstallmentsComponent {
   installmentsData: Installment[] = [
     { id: uuidv4(), identifier: '', name: '', price: 0, date: new Date() }
   ];
+
+  installmentsTotal: InstallmentTotal = {
+    price: 0,
+  };
 
   private dbName = 'installmentsDB';
   private storeName = 'installmentsStore';
@@ -50,6 +58,7 @@ export class InstallmentsComponent {
     if (this.installmentsData[index].identifier) {
       this.database.saveData([this.installmentsData[index]]);
     }
+    this.calculateTotal();
   }
 
   refreshInstallmentsDataFromDatabase() {
@@ -66,8 +75,17 @@ export class InstallmentsComponent {
 
     this.database.queryByDate(startDate, endDate).then((results) => {
       this.installmentsData = results as Installment[];
+      this.calculateTotal();
     }).catch((error) => {
       console.error('Error:', error);
+    });
+  }
+
+  calculateTotal() {
+    this.installmentsTotal.price = 0;
+
+    this.installmentsData.forEach((installment) => {
+      this.installmentsTotal.price += installment.price;
     });
   }
 }

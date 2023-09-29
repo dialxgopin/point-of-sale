@@ -22,6 +22,10 @@ describe('BookingsComponent', () => {
     fixture.detectChanges();
   });
 
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
   it('should add a new row', () => {
     const initialRowCount = component.bookingData.length;
     component.addRow();
@@ -47,4 +51,14 @@ describe('BookingsComponent', () => {
     tick();
     expect(component.bookingData).not.toEqual([]);
   }));
+
+  it('should calculate the total quantity correctly', () => {
+    const mockBookings: any[] = [
+      { id: '1', identifier: 'ID1', name: 'Test', quantity: 5, date: new Date() },
+      { id: '2', identifier: 'ID2', name: 'Test 2', quantity: 10, date: new Date() },
+    ];
+    component.bookingData = mockBookings;
+    component.calculateTotal();
+    expect(component.bookingTotal.quantity).toEqual(15);
+  });
 });

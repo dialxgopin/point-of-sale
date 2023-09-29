@@ -11,6 +11,10 @@ interface Booking {
   date: Date;
 }
 
+interface BookingTotal {
+  quantity: number;
+}
+
 @Component({
   selector: 'app-bookings',
   templateUrl: './bookings.component.html',
@@ -20,6 +24,10 @@ export class BookingsComponent {
   bookingData: Booking[] = [
     { id: uuidv4(), identifier: '', name: '', quantity: 0, date: new Date() }
   ];
+
+  bookingTotal: BookingTotal = {
+    quantity: 0,
+  };
 
   private dbName = 'installmentsDB';
   private storeName = 'installmentsStore';
@@ -50,6 +58,7 @@ export class BookingsComponent {
     if (this.bookingData[index].identifier) {
       this.database.saveData([this.bookingData[index]]);
     }
+    this.calculateTotal();
   }
 
   refreshBookingsDataFromDatabase() {
@@ -66,8 +75,17 @@ export class BookingsComponent {
 
     this.database.queryByDate(startDate, endDate).then((results) => {
       this.bookingData = results as Booking[];
+      this.calculateTotal();
     }).catch((error) => {
       console.error('Error:', error);
+    });
+  }
+
+  calculateTotal() {
+    this.bookingTotal.quantity = 0;
+
+    this.bookingData.forEach((booking) => {
+      this.bookingTotal.quantity += booking.quantity;
     });
   }
 }
