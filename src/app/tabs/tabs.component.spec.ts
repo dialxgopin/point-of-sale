@@ -7,6 +7,9 @@ import { DataTableComponent } from '../data-table/data-table.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { SalesComponent } from '../sales/sales.component';
+import { BookingsComponent } from '../bookings/bookings.component';
+import { BookingInformationComponent } from '../booking-information/booking-information.component';
+import { ExpensesComponent } from '../expenses/expenses.component';
 
 describe('TabsComponent', () => {
   let component: TabsComponent;
@@ -18,7 +21,10 @@ describe('TabsComponent', () => {
         TabsComponent,
         InstallmentsComponent,
         DataTableComponent,
-        SalesComponent
+        SalesComponent,
+        BookingsComponent,
+        BookingInformationComponent,
+        ExpensesComponent
       ],
       imports: [
         MatTabsModule,

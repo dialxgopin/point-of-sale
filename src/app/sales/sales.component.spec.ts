@@ -57,4 +57,17 @@ describe('SalesComponent', () => {
     tick();
     expect(component.salesData).not.toEqual([]);
   }));
+
+  it('should calculate total correctly', () => {
+    const salesData: any[] = [
+      { id: '1', identifier: 'ID1', name: 'Test1', item: 'Item1', price: 100, card: 50, cash: 50, installments: 2, date: new Date() },
+      { id: '2', identifier: 'ID2', name: 'Test2', item: 'Item2', price: 150, card: 75, cash: 75, installments: 1, date: new Date() },
+    ];
+    component.salesData = salesData;
+    component.calculateTotal();
+    expect(component.saleTotal.price).toEqual(250);
+    expect(component.saleTotal.card).toEqual(125);
+    expect(component.saleTotal.cash).toEqual(125);
+    expect(component.saleTotal.installments).toEqual(3);
+  });
 });

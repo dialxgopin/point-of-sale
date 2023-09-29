@@ -1,45 +1,41 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { InstallmentsComponent } from './installments.component';
-import { FormsModule } from '@angular/forms';
+import { BookingsComponent } from './bookings.component';
 import { FiltersService } from '../filters.service';
 import { DataTableComponent } from '../data-table/data-table.component';
+import { FormsModule } from '@angular/forms';
 
-describe('InstallmentsComponent', () => {
-  let component: InstallmentsComponent;
-  let fixture: ComponentFixture<InstallmentsComponent>;
+describe('BookingsComponent', () => {
+  let component: BookingsComponent;
+  let fixture: ComponentFixture<BookingsComponent>;
   let filtersService: FiltersService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [InstallmentsComponent, DataTableComponent],
+      declarations: [BookingsComponent, DataTableComponent],
       imports: [FormsModule],
-      providers: [FiltersService],
+      providers: [FiltersService]
     });
 
-    fixture = TestBed.createComponent(InstallmentsComponent);
+    fixture = TestBed.createComponent(BookingsComponent);
     component = fixture.componentInstance;
     filtersService = TestBed.inject(FiltersService);
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
   it('should add a new row', () => {
-    const initialRowCount = component.installmentsData.length;
+    const initialRowCount = component.bookingData.length;
     component.addRow();
-    const finalRowCount = component.installmentsData.length;
+    const finalRowCount = component.bookingData.length;
     expect(finalRowCount).toBeGreaterThan(initialRowCount);
-    const addedRow = component.installmentsData[finalRowCount - 1];
+    const addedRow = component.bookingData[finalRowCount - 1];
     expect(addedRow.id).toBeTruthy();
   });
 
   it('should save a row when identifier is present', () => {
     const index = 0;
-    component.installmentsData[index].identifier = 'some-identifier';
+    component.bookingData[index].identifier = 'some-identifier';
     component.saveRow(index);
-    expect(component.installmentsData).toContain(component.installmentsData[index]);
+    expect(component.bookingData).toContain(component.bookingData[index]);
   });
 
   it('should refresh sales data from database on table date change', fakeAsync(() => {
@@ -47,8 +43,8 @@ describe('InstallmentsComponent', () => {
     filtersService.setDate(newDate);
     tick();
     expect(component.tableDate).toEqual(newDate);
-    component.refreshInstallmentsDataFromDatabase();
+    component.refreshBookingsDataFromDatabase();
     tick();
-    expect(component.installmentsData).not.toEqual([]);
+    expect(component.bookingData).not.toEqual([]);
   }));
 });

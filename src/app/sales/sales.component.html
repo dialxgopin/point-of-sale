@@ -18,4 +18,19 @@
         <td><input name="installments" type="number" [(ngModel)]="sale.installments" (ngModelChange)="saveRow(i)"></td>
     </tr>
 </app-data-table>
+<strong>Daily total:</strong>
+<app-data-table>
+    <tr headers>
+        <th>Item price</th>
+        <th>Card payment</th>
+        <th>Cash payment</th>
+        <th>In installments</th>
+    </tr>
+    <tr rows>
+        <td>{{ saleTotal.price }}</td>
+        <td>{{ saleTotal.card }}</td>
+        <td>{{ saleTotal.cash }}</td>
+        <td>{{ saleTotal.installments }}</td>
+    </tr>
+</app-data-table>
 <button (click)="addRow()">Add Row</button>

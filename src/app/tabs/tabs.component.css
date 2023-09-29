@@ -1,0 +1,34 @@
+:host ::ng-deep table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+}
+
+:host ::ng-deep th {
+    background-color: #007bff;
+    color: white;
+    text-align: left;
+    padding: 0.625rem;
+    border-bottom: 0.125rem solid #ddd;
+}
+
+:host ::ng-deep tr {
+    border-bottom: 0.0625rem solid #ddd;
+}
+
+:host ::ng-deep tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+:host ::ng-deep td {
+    padding: 0.625rem;
+}
+
+:host ::ng-deep button {
+    background-color: #f39c12;
+    color: white;
+    border: none;
+    padding: 0.3125rem 0.625rem;
+    margin: 1rem;
+    cursor: pointer;
+}

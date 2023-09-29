@@ -15,6 +15,13 @@ interface Sale {
   date: Date;
 }
 
+interface SaleTotal {
+  price: number;
+  card: number;
+  cash: number;
+  installments: number;
+}
+
 @Component({
   selector: 'app-sales',
   templateUrl: './sales.component.html',
@@ -34,6 +41,13 @@ export class SalesComponent {
       date: new Date(),
     },
   ];
+
+  saleTotal: SaleTotal = {
+    price: 0,
+    card: 0,
+    cash: 0,
+    installments: 0,
+  };
 
   private dbName = 'salesDB';
   private storeName = 'salesStore';
@@ -73,6 +87,7 @@ export class SalesComponent {
     if (this.salesData[index].identifier) {
       this.database.saveData([this.salesData[index]]);
     }
+    this.calculateTotal();
   }
 
   refreshSalesDataFromDatabase() {
@@ -89,8 +104,23 @@ export class SalesComponent {
 
     this.database.queryByDate(startDate, endDate).then((results) => {
       this.salesData = results as Sale[];
+      this.calculateTotal();
     }).catch((error) => {
       console.error('Error:', error);
+    });
+  }
+
+  calculateTotal() {
+    this.saleTotal.price = 0;
+    this.saleTotal.card = 0;
+    this.saleTotal.cash = 0;
+    this.saleTotal.installments = 0;
+
+    this.salesData.forEach((sale) => {
+      this.saleTotal.price += sale.price;
+      this.saleTotal.card += sale.card;
+      this.saleTotal.cash += sale.cash;
+      this.saleTotal.installments += sale.installments;
     });
   }
 }

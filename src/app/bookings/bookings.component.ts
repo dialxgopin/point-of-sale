@@ -3,22 +3,22 @@ import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
 import { Database } from '../database';
 
-interface Installment {
+interface Booking {
   id: string;
   identifier: string;
   name: string;
-  price: number;
+  quantity: number;
   date: Date;
 }
 
 @Component({
-  selector: 'app-installments',
-  templateUrl: './installments.component.html',
-  styleUrls: ['./installments.component.css']
+  selector: 'app-bookings',
+  templateUrl: './bookings.component.html',
+  styleUrls: ['./bookings.component.css']
 })
-export class InstallmentsComponent {
-  installmentsData: Installment[] = [
-    { id: uuidv4(), identifier: '', name: '', price: 0, date: new Date() }
+export class BookingsComponent {
+  bookingData: Booking[] = [
+    { id: uuidv4(), identifier: '', name: '', quantity: 0, date: new Date() }
   ];
 
   private dbName = 'installmentsDB';
@@ -36,23 +36,23 @@ export class InstallmentsComponent {
     this.filtersService.tableDate$.subscribe(
       date => {
         this.tableDate = date;
-        this.refreshInstallmentsDataFromDatabase();
+        this.refreshBookingsDataFromDatabase();
       }
     );
   }
 
   addRow() {
-    const newRow: Installment = { id: uuidv4(), identifier: '', name: '', price: 0, date: this.tableDate };
-    this.installmentsData.push(newRow);
+    const newRow: Booking = { id: uuidv4(), identifier: '', name: '', quantity: 0, date: this.tableDate };
+    this.bookingData.push(newRow);
   }
 
   saveRow(index: number) {
-    if (this.installmentsData[index].identifier) {
-      this.database.saveData([this.installmentsData[index]]);
+    if (this.bookingData[index].identifier) {
+      this.database.saveData([this.bookingData[index]]);
     }
   }
 
-  refreshInstallmentsDataFromDatabase() {
+  refreshBookingsDataFromDatabase() {
     const startDate = new Date(
       this.tableDate.getFullYear(),
       this.tableDate.getMonth(),
@@ -65,7 +65,7 @@ export class InstallmentsComponent {
     );
 
     this.database.queryByDate(startDate, endDate).then((results) => {
-      this.installmentsData = results as Installment[];
+      this.bookingData = results as Booking[];
     }).catch((error) => {
       console.error('Error:', error);
     });

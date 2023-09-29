@@ -10,6 +10,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { FiltersService } from './filters.service';
 import { SalesComponent } from './sales/sales.component';
+import { BookingsComponent } from './bookings/bookings.component';
+import { BookingInformationComponent } from './booking-information/booking-information.component';
+import { ExpensesComponent } from './expenses/expenses.component';
 
 describe('AppComponent', () => {
   let filtersService: FiltersService;
@@ -27,7 +30,10 @@ describe('AppComponent', () => {
       DataTableComponent,
       TabsComponent,
       DatepickerComponent,
-      SalesComponent
+      SalesComponent,
+      BookingsComponent,
+      BookingInformationComponent,
+      ExpensesComponent
     ],
     providers: [FiltersService]
   }));

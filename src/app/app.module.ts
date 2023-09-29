@@ -13,6 +13,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { SalesComponent } from './sales/sales.component';
+import { BookingsComponent } from './bookings/bookings.component';
+import { BookingInformationComponent } from './booking-information/booking-information.component';
+import { ExpensesComponent } from './expenses/expenses.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +24,10 @@ import { SalesComponent } from './sales/sales.component';
     InstallmentsComponent,
     TabsComponent,
     DatepickerComponent,
-    SalesComponent
+    SalesComponent,
+    BookingsComponent,
+    BookingInformationComponent,
+    ExpensesComponent
   ],
   imports: [
     BrowserModule,
