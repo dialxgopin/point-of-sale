@@ -2,12 +2,12 @@
     <tr headers>
         <th>Identifier</th>
         <th>Name</th>
-        <th>Price</th>
+        <th>Quantity</th>
     </tr>
     <tr *ngFor="let booking of bookingData; let i = index" rows>
         <td><input name="identifier" type="text" [(ngModel)]="booking.identifier" (ngModelChange)="saveRow(i)"></td>
         <td><input name="name" type="text" [(ngModel)]="booking.name" (ngModelChange)="saveRow(i)"></td>
-        <td><input name="price" type="number" [(ngModel)]="booking.quantity" (ngModelChange)="saveRow(i)"></td>
+        <td><input name="quantity" type="number" [(ngModel)]="booking.quantity" (ngModelChange)="saveRow(i)"></td>
     </tr>
 </app-data-table>
 <strong>Daily total:</strong>

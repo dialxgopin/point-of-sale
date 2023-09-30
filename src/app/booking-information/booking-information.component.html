@@ -1,1 +1,21 @@
-<p>booking-information works!</p>
+<app-data-table>
+    <tr headers>
+        <th>Number</th>
+        <th>Identifier</th>
+        <th>Name</th>
+        <th>Item name</th>
+        <th>Item price</th>
+        <th>Paid</th>
+        <th>Due</th>
+    </tr>
+    <tr *ngFor="let booking of bookingData; let i = index" rows>
+        <td><input name="number" type="number"></td>
+        <td><input name="identifier" type="text" [(ngModel)]="booking.identifier" (ngModelChange)="saveRow(i)"></td>
+        <td><input name="name" type="text" [(ngModel)]="booking.name" (ngModelChange)="saveRow(i)"></td>
+        <td><input name="item" type="text" [(ngModel)]="booking.item" (ngModelChange)="saveRow(i)"></td>
+        <td><input name="price" type="number" [(ngModel)]="booking.price" (ngModelChange)="saveRow(i)"></td>
+        <td><input name="paid" type="number" [(ngModel)]="booking.paid" (ngModelChange)="saveRow(i)"></td>
+        <td><input name="due" type="number" [(ngModel)]="booking.due" (ngModelChange)="saveRow(i)"></td>
+    </tr>
+</app-data-table>
+<button (click)="addRow()">Add Row</button>

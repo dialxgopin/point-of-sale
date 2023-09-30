@@ -1,1 +1,22 @@
-<p>expenses works!</p>
+<app-data-table>
+    <tr headers>
+        <th>Identifier</th>
+        <th>Name</th>
+        <th>Price</th>
+    </tr>
+    <tr *ngFor="let expense of expenseData; let i = index" rows>
+        <td><input name="identifier" type="text" [(ngModel)]="expense.identifier" (ngModelChange)="saveRow(i)"></td>
+        <td><input name="name" type="text" [(ngModel)]="expense.name" (ngModelChange)="saveRow(i)"></td>
+        <td><input name="price" type="number" [(ngModel)]="expense.price" (ngModelChange)="saveRow(i)"></td>
+    </tr>
+</app-data-table>
+<strong>Daily total:</strong>
+<app-data-table>
+    <tr headers>
+        <th>Price</th>
+    </tr>
+    <tr rows>
+        <td>{{ expenseTotal.price }}</td>
+    </tr>
+</app-data-table>
+<button (click)="addRow()">Add Row</button>

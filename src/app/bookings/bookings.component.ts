@@ -29,8 +29,8 @@ export class BookingsComponent {
     quantity: 0,
   };
 
-  private dbName = 'installmentsDB';
-  private storeName = 'installmentsStore';
+  private dbName = 'bookingsDB';
+  private storeName = 'bookingsStore';
   private database: Database;
 
   tableDate: Date = new Date();

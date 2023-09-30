@@ -42,7 +42,7 @@ describe('BookingsComponent', () => {
     expect(component.bookingData).toContain(component.bookingData[index]);
   });
 
-  it('should refresh sales data from database on table date change', fakeAsync(() => {
+  it('should refresh bookings data from database on table date change', fakeAsync(() => {
     const newDate = new Date('2023-09-01');
     filtersService.setDate(newDate);
     tick();

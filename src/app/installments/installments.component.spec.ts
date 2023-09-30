@@ -42,7 +42,7 @@ describe('InstallmentsComponent', () => {
     expect(component.installmentsData).toContain(component.installmentsData[index]);
   });
 
-  it('should refresh sales data from database on table date change', fakeAsync(() => {
+  it('should refresh installments data from database on table date change', fakeAsync(() => {
     const newDate = new Date('2023-09-01');
     filtersService.setDate(newDate);
     tick();
