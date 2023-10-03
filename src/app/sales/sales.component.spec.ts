@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { SalesComponent } from './sales.component';
 import { FiltersService } from '../filters.service';
-import { Database } from '../database';
 import { DataTableComponent } from '../data-table/data-table.component';
 
 describe('SalesComponent', () => {
   let component: SalesComponent;
   let fixture: ComponentFixture<SalesComponent>;
   let filtersService: FiltersService;
-  let database: Database;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -19,10 +17,6 @@ describe('SalesComponent', () => {
     fixture = TestBed.createComponent(SalesComponent);
     component = fixture.componentInstance;
     filtersService = TestBed.inject(FiltersService);
-    database = new Database();
-    spyOn(database, 'setDatabaseAndStore');
-    spyOn(database, 'saveData').and.returnValue(Promise.resolve());
-
     component.ngOnInit();
   });
 
@@ -43,7 +37,7 @@ describe('SalesComponent', () => {
     const index = 0;
     component.salesData[index].identifier = 'some-identifier';
     component.saveRow(index);
-    expect(component.salesData).toContain(component.salesData[index]);
+    expect(component.salesData[index].identifier).toEqual('some-identifier');
   });
 
   it('should refresh sales data from database on table date change', fakeAsync(() => {

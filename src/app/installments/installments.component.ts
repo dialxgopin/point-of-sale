@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
 import { Database } from '../database';
+import { Sale } from '../sale';
 
 interface Installment {
   id: string;
@@ -29,8 +30,8 @@ export class InstallmentsComponent {
     price: 0,
   };
 
-  private dbName = 'installmentsDB';
-  private storeName = 'installmentsStore';
+  private dbName = 'salesDB';
+  private storeName = 'salesStore';
   private database: Database;
 
   tableDate: Date = new Date();
@@ -44,24 +45,35 @@ export class InstallmentsComponent {
     this.filtersService.tableDate$.subscribe(
       date => {
         this.tableDate = date;
-        this.refreshInstallmentsDataFromDatabase();
+        this.querySales();
+      }
+    );
+    this.filtersService.rowCount$.subscribe(
+      rows => {
+        this.querySales();
       }
     );
   }
 
-  addRow() {
-    const newRow: Installment = { id: uuidv4(), identifier: '', name: '', price: 0, date: this.tableDate };
-    this.installmentsData.push(newRow);
-  }
-
-  saveRow(index: number) {
-    if (this.installmentsData[index].identifier) {
-      this.database.saveData([this.installmentsData[index]]);
+  async querySales() {
+    const [startDate, endDate] = this.dateOneDayRange();
+    const salesData = await this.database.queryByDate(startDate, endDate) as Sale[];
+    const installmentsData: Installment[] = [];
+    for (const sale of salesData) {
+      const saleDetail: Installment = {
+        id: uuidv4(),
+        identifier: sale.identifier,
+        name: sale.name,
+        price: sale.installments,
+        date: sale.date,
+      };
+      installmentsData.push(saleDetail);
     }
+    this.installmentsData = installmentsData;
     this.calculateTotal();
   }
 
-  refreshInstallmentsDataFromDatabase() {
+  private dateOneDayRange() {
     const startDate = new Date(
       this.tableDate.getFullYear(),
       this.tableDate.getMonth(),
@@ -72,13 +84,7 @@ export class InstallmentsComponent {
       this.tableDate.getMonth(),
       this.tableDate.getDate() + 1
     );
-
-    this.database.queryByDate(startDate, endDate).then((results) => {
-      this.installmentsData = results as Installment[];
-      this.calculateTotal();
-    }).catch((error) => {
-      console.error('Error:', error);
-    });
+    return [startDate, endDate];
   }
 
   calculateTotal() {

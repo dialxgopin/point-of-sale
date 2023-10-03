@@ -26,31 +26,15 @@ describe('InstallmentsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should add a new row', () => {
-    const initialRowCount = component.installmentsData.length;
-    component.addRow();
-    const finalRowCount = component.installmentsData.length;
-    expect(finalRowCount).toBeGreaterThan(initialRowCount);
-    const addedRow = component.installmentsData[finalRowCount - 1];
-    expect(addedRow.id).toBeTruthy();
+  it('should query sales and update installments data and total on ngOnInit', async () => {
+    await component.ngOnInit();
+    expect(component.installmentsTotal.price).toEqual(0);
   });
 
-  it('should save a row when identifier is present', () => {
-    const index = 0;
-    component.installmentsData[index].identifier = 'some-identifier';
-    component.saveRow(index);
-    expect(component.installmentsData).toContain(component.installmentsData[index]);
+  it('should update installments data and total on querySales', async () => {
+    await component.querySales();
+    expect(component.installmentsTotal.price).toEqual(0);
   });
-
-  it('should refresh installments data from database on table date change', fakeAsync(() => {
-    const newDate = new Date('2023-09-01');
-    filtersService.setDate(newDate);
-    tick();
-    expect(component.tableDate).toEqual(newDate);
-    component.refreshInstallmentsDataFromDatabase();
-    tick();
-    expect(component.installmentsData).not.toEqual([]);
-  }));
 
   it('should calculate the total price correctly', () => {
     const mockInstallments: any[] = [

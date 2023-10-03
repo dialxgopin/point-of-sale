@@ -2,18 +2,7 @@ import { Component } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
 import { Database } from '../database';
-
-interface Sale {
-  id: string;
-  identifier: string;
-  name: string;
-  item: string;
-  price: number;
-  card: number;
-  cash: number;
-  installments: number;
-  date: Date;
-}
+import { Sale } from '../sale';
 
 interface SaleTotal {
   price: number;
@@ -86,6 +75,7 @@ export class SalesComponent {
   saveRow(index: number) {
     if (this.salesData[index].identifier) {
       this.database.saveData([this.salesData[index]]);
+      this.filtersService.changeRowCount(this.salesData.length);
     }
     this.calculateTotal();
   }

@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { BookingInformationComponent } from './booking-information.component';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { FormsModule } from '@angular/forms';
@@ -20,5 +19,37 @@ describe('BookingInformationComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should query sales and update booking data on ngOnInit', async () => {
+    await component.ngOnInit();
+    expect(component.bookingData.at(0)).toEqual(
+      {
+        id: jasmine.any(String),
+        identifier: jasmine.any(String),
+        name: '',
+        item: '',
+        price: 0,
+        paid: 0,
+        due: 0,
+        date: jasmine.any(Date),
+      }
+    );
+  });
+
+  it('should update booking data on querySales', async () => {
+    await component.querySales();
+    expect(component.bookingData.at(0)).toEqual(
+      {
+        id: jasmine.any(String),
+        identifier: jasmine.any(String),
+        name: '',
+        item: '',
+        price: 0,
+        paid: 0,
+        due: 0,
+        date: jasmine.any(Date),
+      }
+    );
   });
 });

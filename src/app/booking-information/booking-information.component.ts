@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
 import { Database } from '../database';
+import { Sale } from '../sale';
 
 interface BookingDetails {
   id: string;
@@ -21,11 +22,20 @@ interface BookingDetails {
 })
 export class BookingInformationComponent {
   bookingData: BookingDetails[] = [
-    { id: uuidv4(), identifier: '', name: '', item: '', price: 0, paid: 0, due: 0, date: new Date() }
+    {
+      id: uuidv4(),
+      identifier: '',
+      name: '',
+      item: '',
+      price: 0,
+      paid: 0,
+      due: 0,
+      date: new Date()
+    }
   ];
 
-  private dbName = 'bookingDetailsDB';
-  private storeName = 'bookingDetailsStore';
+  private dbName = 'salesDB';
+  private storeName = 'salesStore';
   private database: Database;
 
   tableDate: Date = new Date();
@@ -39,23 +49,39 @@ export class BookingInformationComponent {
     this.filtersService.tableDate$.subscribe(
       date => {
         this.tableDate = date;
-        this.refreshBookingsDataFromDatabase();
+        this.querySales();
+      }
+    );
+    this.filtersService.rowCount$.subscribe(
+      rows => {
+        this.querySales();
       }
     );
   }
 
-  addRow() {
-    const newRow: BookingDetails = { id: uuidv4(), identifier: '', name: '', item: '', price: 0, paid: 0, due: 0, date: this.tableDate };
-    this.bookingData.push(newRow);
-  }
-
-  saveRow(index: number) {
-    if (this.bookingData[index].identifier) {
-      this.database.saveData([this.bookingData[index]]);
+  async querySales() {
+    const [startDate, endDate] = this.dateOneDayRange();
+    const salesData = await this.database.queryByDate(startDate, endDate) as Sale[];
+    const bookingData: BookingDetails[] = [];
+    for (const sale of salesData) {
+      const paid = sale.card + sale.cash;
+      const due = sale.price - paid;
+      const bookingDetail: BookingDetails = {
+        id: uuidv4(),
+        identifier: sale.identifier,
+        name: sale.name,
+        item: sale.item,
+        price: sale.price,
+        paid: paid,
+        due: due,
+        date: sale.date,
+      };
+      bookingData.push(bookingDetail);
     }
+    this.bookingData = bookingData;
   }
 
-  refreshBookingsDataFromDatabase() {
+  private dateOneDayRange() {
     const startDate = new Date(
       this.tableDate.getFullYear(),
       this.tableDate.getMonth(),
@@ -66,11 +92,6 @@ export class BookingInformationComponent {
       this.tableDate.getMonth(),
       this.tableDate.getDate() + 1
     );
-
-    this.database.queryByDate(startDate, endDate).then((results) => {
-      this.bookingData = results as BookingDetails[];
-    }).catch((error) => {
-      console.error('Error:', error);
-    });
+    return [startDate, endDate];
   }
 }

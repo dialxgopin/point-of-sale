@@ -5,9 +5,9 @@
         <th>Price</th>
     </tr>
     <tr *ngFor="let installment of installmentsData; let i = index" rows>
-        <td><input name="identifier" type="text" [(ngModel)]="installment.identifier" (ngModelChange)="saveRow(i)"></td>
-        <td><input name="name" type="text" [(ngModel)]="installment.name" (ngModelChange)="saveRow(i)"></td>
-        <td><input name="price" type="number" [(ngModel)]="installment.price" (ngModelChange)="saveRow(i)"></td>
+        <td><input name="identifier" type="text" value="{{installment.identifier}}" readonly></td>
+        <td><input name="name" type="text" value="{{installment.name}}" readonly></td>
+        <td><input name="price" type="number" value="{{installment.price}}" readonly></td>
     </tr>
 </app-data-table>
 <strong>Daily total:</strong>
@@ -19,4 +19,3 @@
         <td>{{ installmentsTotal.price }}</td>
     </tr>
 </app-data-table>
-<button (click)="addRow()">Add Row</button>
