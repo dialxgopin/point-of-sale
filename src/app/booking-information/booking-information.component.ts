@@ -6,6 +6,7 @@ import { Sale } from '../sale';
 
 interface BookingDetails {
   id: string;
+  saleNumber: number;
   identifier: string;
   name: string;
   item: string;
@@ -24,6 +25,7 @@ export class BookingInformationComponent {
   bookingData: BookingDetails[] = [
     {
       id: uuidv4(),
+      saleNumber: 0,
       identifier: '',
       name: '',
       item: '',
@@ -68,6 +70,7 @@ export class BookingInformationComponent {
       const due = sale.price - paid;
       const bookingDetail: BookingDetails = {
         id: uuidv4(),
+        saleNumber: sale.saleNumber,
         identifier: sale.identifier,
         name: sale.name,
         item: sale.item,

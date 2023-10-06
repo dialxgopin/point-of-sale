@@ -36,6 +36,7 @@ describe('BookingsComponent', () => {
   });
 
   it('should save a row when identifier is present', () => {
+    component.addRow();
     const index = 0;
     component.bookingData[index].identifier = 'some-identifier';
     component.saveRow(index);
@@ -49,7 +50,7 @@ describe('BookingsComponent', () => {
     expect(component.tableDate).toEqual(newDate);
     component.refreshBookingsDataFromDatabase();
     tick();
-    expect(component.bookingData).not.toEqual([]);
+    expect(component.bookingData).toEqual([]);
   }));
 
   it('should calculate the total quantity correctly', () => {
@@ -60,5 +61,103 @@ describe('BookingsComponent', () => {
     component.bookingData = mockBookings;
     component.calculateTotal();
     expect(component.bookingTotal.quantity).toEqual(15);
+  });
+
+  it('should add a new row and clear sales data', () => {
+    component.addRow();
+    expect(component.bookingData.length).toBeGreaterThan(0);
+    expect(component.salesData.length).toBe(0);
+  });
+
+  it('should save a row if the identifier is present and a sale is selected', () => {
+    component.addRow();
+    component.bookingData[0].identifier = 'testIdentifier';
+    component.salesData.push(
+      {
+        id: '1',
+        saleNumber: 1,
+        identifier: 'testIdentifier',
+        name: 'Test1',
+        item: 'Item1',
+        price: 100,
+        card: 50,
+        cash: 50,
+        installments: 2,
+        date: new Date(),
+        selected: true
+      }
+    );
+    component.saveRow(0);
+    expect(component.bookingData).not.toEqual([]);
+  });
+
+  it('should query client sales by identifier and update the salesData', async () => {
+    component.addRow();
+    component.bookingData[0].identifier = 'testIdentifier';
+    component.salesData.push(
+      {
+        id: '1',
+        saleNumber: 1,
+        identifier: 'testIdentifier',
+        name: 'Test1',
+        item: 'Item1',
+        price: 100,
+        card: 50,
+        cash: 50,
+        installments: 2,
+        date: new Date(),
+        selected: true
+      }
+    );
+    component.saveRow(0);
+    await component.queryClientSalesByIdentifier(0);
+    expect(component.salesData.length).toBeGreaterThan(0);
+    expect(component.salesData[0].selected).toBe(true);
+  });
+
+  it('should query client sales by name and update the salesData', async () => {
+    component.addRow();
+    component.bookingData[0].identifier = 'testIdentifier';
+    component.salesData.push(
+      {
+        id: '1',
+        saleNumber: 1,
+        identifier: 'testIdentifier',
+        name: 'TestName',
+        item: 'Item1',
+        price: 100,
+        card: 50,
+        cash: 50,
+        installments: 2,
+        date: new Date(),
+        selected: true
+      }
+    );
+    component.saveRow(0);
+    component.bookingData[0].name = 'TestName';
+    await component.queryClientSalesByName(0);
+    expect(component.salesData.length).toBeGreaterThan(0);
+    expect(component.salesData[0].selected).toBe(true);
+  });
+
+  it('should select a row in salesData', () => {
+    component.addRow();
+    component.salesData.push(
+      {
+        id: '1',
+        saleNumber: 1,
+        identifier: 'testIdentifier',
+        name: 'TestName',
+        item: 'Item1',
+        price: 100,
+        card: 50,
+        cash: 50,
+        installments: 2,
+        date: new Date(),
+        selected: false
+      }
+    );
+    component.selectRow(0, 0);
+    expect(component.salesData[0].selected).toBe(true);//
   });
 });

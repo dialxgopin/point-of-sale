@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { SalesComponent } from './sales.component';
 import { FiltersService } from '../filters.service';
 import { DataTableComponent } from '../data-table/data-table.component';
+import { Sale } from '../sale';
 
 describe('SalesComponent', () => {
   let component: SalesComponent;
@@ -53,9 +54,31 @@ describe('SalesComponent', () => {
   }));
 
   it('should calculate total correctly', () => {
-    const salesData: any[] = [
-      { id: '1', identifier: 'ID1', name: 'Test1', item: 'Item1', price: 100, card: 50, cash: 50, installments: 2, date: new Date() },
-      { id: '2', identifier: 'ID2', name: 'Test2', item: 'Item2', price: 150, card: 75, cash: 75, installments: 1, date: new Date() },
+    const salesData: Sale[] = [
+      {
+        id: '1',
+        saleNumber: 1,
+        identifier: 'ID1',
+        name: 'Test1',
+        item: 'Item1',
+        price: 100,
+        card: 50,
+        cash: 50,
+        installments: 2,
+        date: new Date()
+      },
+      {
+        id: '2',
+        saleNumber: 2,
+        identifier: 'ID2',
+        name: 'Test2',
+        item: 'Item2',
+        price: 150,
+        card: 75,
+        cash: 75,
+        installments: 1,
+        date: new Date()
+      },
     ];
     component.salesData = salesData;
     component.calculateTotal();

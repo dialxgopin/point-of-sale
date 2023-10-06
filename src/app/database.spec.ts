@@ -5,12 +5,16 @@ describe('Database', () => {
   const dbName = 'testDB';
   const storeName = 'testStore';
 
-  beforeEach(() => {
+  beforeAll((done) => {
     database = new Database();
     database.setDatabaseAndStore(dbName, storeName);
+    const testData = { id: '1', identifier: 'testIdentifier', name: 'Test' };
+    database.saveData([testData]).then(() => {
+      done();
+    });
   });
 
-  afterEach((done) => {
+  afterAll((done) => {
     const request = window.indexedDB.deleteDatabase(dbName);
 
     request.onsuccess = () => {
@@ -44,5 +48,22 @@ describe('Database', () => {
         });
       });
     });
+  });
+
+  it('should count rows in the store', async () => {
+    const count = await database.countRows();
+    expect(count).toBeGreaterThan(0);
+  });
+
+  it('should query data by identifier', async () => {
+    const identifier = 'testIdentifier';
+    const results = await database.queryByIdentifier(identifier);
+    expect(results.length).toBeGreaterThan(0);
+  });
+
+  it('should query data by name', async () => {
+    const name = 'Test';
+    const results = await database.queryByName(name);
+    expect(results.length).toBeGreaterThan(0);
   });
 });

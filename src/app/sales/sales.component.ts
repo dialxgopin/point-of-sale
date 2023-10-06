@@ -20,6 +20,7 @@ export class SalesComponent {
   salesData: Sale[] = [
     {
       id: uuidv4(),
+      saleNumber: 0,
       identifier: '',
       name: '',
       item: '',
@@ -43,9 +44,12 @@ export class SalesComponent {
   private database: Database;
   tableDate: Date = new Date();
 
+  rowCount: number = 0;
+
   constructor(private filtersService: FiltersService) {
     this.database = new Database();
     this.database.setDatabaseAndStore(this.dbName, this.storeName);
+    this.getCountOfRows();
   }
 
   ngOnInit() {
@@ -57,9 +61,14 @@ export class SalesComponent {
     );
   }
 
-  addRow() {
+  async getCountOfRows() {
+    this.rowCount = await this.database.countRows();
+  }
+
+  async addRow() {
     const newRow: Sale = {
       id: uuidv4(),
+      saleNumber: this.rowCount + 1,
       identifier: '',
       name: '',
       item: '',

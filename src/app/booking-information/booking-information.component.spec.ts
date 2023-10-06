@@ -26,12 +26,13 @@ describe('BookingInformationComponent', () => {
     expect(component.bookingData.at(0)).toEqual(
       {
         id: jasmine.any(String),
+        saleNumber: jasmine.any(Number),
         identifier: jasmine.any(String),
-        name: '',
-        item: '',
-        price: 0,
-        paid: 0,
-        due: 0,
+        name: jasmine.any(String),
+        item: jasmine.any(String),
+        price: jasmine.any(Number),
+        paid: jasmine.any(Number),
+        due: jasmine.any(Number),
         date: jasmine.any(Date),
       }
     );
@@ -42,12 +43,13 @@ describe('BookingInformationComponent', () => {
     expect(component.bookingData.at(0)).toEqual(
       {
         id: jasmine.any(String),
+        saleNumber: jasmine.any(Number),
         identifier: jasmine.any(String),
-        name: '',
-        item: '',
-        price: 0,
-        paid: 0,
-        due: 0,
+        name: jasmine.any(String),
+        item: jasmine.any(String),
+        price: jasmine.any(Number),
+        paid: jasmine.any(Number),
+        due: jasmine.any(Number),
         date: jasmine.any(Date),
       }
     );

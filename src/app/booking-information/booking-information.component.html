@@ -9,7 +9,7 @@
         <th>Due</th>
     </tr>
     <tr *ngFor="let booking of bookingData; let i = index" rows>
-        <td><input name="number" type="number" readonly></td>
+        <td><input name="number" type="number" value="{{booking.saleNumber}}" readonly></td>
         <td><input name="identifier" type="text" value="{{booking.identifier}}" readonly></td>
         <td><input name="name" type="text" value="{{booking.name}}" readonly></td>
         <td><input name="item" type="text" value="{{booking.item}}" readonly></td>

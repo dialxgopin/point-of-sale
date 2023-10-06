@@ -1,5 +1,6 @@
 export interface Sale {
     id: string;
+    saleNumber: number;
     identifier: string;
     name: string;
     item: string;
