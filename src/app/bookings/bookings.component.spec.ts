@@ -158,6 +158,6 @@ describe('BookingsComponent', () => {
       }
     );
     component.selectRow(0, 0);
-    expect(component.salesData[0].selected).toBe(true);//
+    expect(component.salesData[0].selected).toBe(true);
   });
 });

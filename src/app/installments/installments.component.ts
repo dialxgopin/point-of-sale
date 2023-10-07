@@ -30,6 +30,9 @@ export class InstallmentsComponent {
     price: 0,
   };
 
+  searchIdentifier: string = '';
+  searchName: string = '';
+
   private dbName = 'salesDB';
   private storeName = 'salesStore';
   private database: Database;
@@ -45,6 +48,8 @@ export class InstallmentsComponent {
     this.filtersService.tableDate$.subscribe(
       date => {
         this.tableDate = date;
+        this.searchIdentifier = '';
+        this.searchName = '';
         this.querySales();
       }
     );
@@ -58,18 +63,7 @@ export class InstallmentsComponent {
   async querySales() {
     const [startDate, endDate] = this.dateOneDayRange();
     const salesData = await this.database.queryByDate(startDate, endDate) as Sale[];
-    const installmentsData: Installment[] = [];
-    for (const sale of salesData) {
-      const saleDetail: Installment = {
-        id: uuidv4(),
-        identifier: sale.identifier,
-        name: sale.name,
-        price: sale.installments,
-        date: sale.date,
-      };
-      installmentsData.push(saleDetail);
-    }
-    this.installmentsData = installmentsData;
+    this.installmentsData = salesData;
     this.calculateTotal();
   }
 
@@ -93,5 +87,33 @@ export class InstallmentsComponent {
     this.installmentsData.forEach((installment) => {
       this.installmentsTotal.price += installment.price;
     });
+  }
+
+  queryClientSalesByIdentifier() {
+    this.searchName = '';
+    if (this.searchIdentifier.length > 0) {
+      this.database.queryByIdentifier(this.searchIdentifier).then((results) => {
+        this.installmentsData = results as Sale[];
+        this.calculateTotal();
+      }).catch((error) => {
+        console.error('Error:', error);
+      });
+    } else {
+      this.querySales();
+    }
+  }
+
+  queryClientSalesByName() {
+    this.searchIdentifier = '';
+    if (this.searchName.length > 0) {
+      this.database.queryByName(this.searchName).then((results) => {
+        this.installmentsData = results as Sale[];
+        this.calculateTotal();
+      }).catch((error) => {
+        console.error('Error:', error);
+      });
+    } else {
+      this.querySales();
+    }
   }
 }

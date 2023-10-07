@@ -11,7 +11,7 @@ import { TabsComponent } from './tabs/tabs.component';
 import { DatepickerComponent } from './datepicker/datepicker.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { SalesComponent } from './sales/sales.component';
 import { BookingsComponent } from './bookings/bookings.component';
 import { BookingInformationComponent } from './booking-information/booking-information.component';
@@ -39,7 +39,7 @@ import { ExpensesComponent } from './expenses/expenses.component';
     MatDatepickerModule,
     MatNativeDateModule
   ],
-  providers: [],
+  providers: [{provide: MAT_DATE_LOCALE, useValue: 'es-CO'},],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

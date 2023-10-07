@@ -1,8 +1,8 @@
 <app-data-table>
     <tr headers>
         <th>Number</th>
-        <th>Identifier</th>
-        <th>Name</th>
+        <th><input name="searchIdentifier" type="text" [(ngModel)]="searchIdentifier" (ngModelChange)="queryClientSalesByIdentifier()" placeholder="Identifier"></th>
+        <th><input name="searchName" type="text" [(ngModel)]="searchName" (ngModelChange)="queryClientSalesByName()" placeholder="Name"></th>
         <th>Item name</th>
         <th>Item price</th>
         <th>Paid</th>

@@ -7,6 +7,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 export class DatepickerComponent {
   @Output() dateSelected: EventEmitter<Date> = new EventEmitter<Date>();
+  defaultDate = new Date();
 
   onDateChange(event: any) {
     this.dateSelected.emit(event.value);

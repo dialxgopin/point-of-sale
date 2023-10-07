@@ -1,7 +1,7 @@
 <app-data-table>
     <tr headers>
-        <th>Identifier</th>
-        <th>Name</th>
+        <th><input name="searchIdentifier" type="text" [(ngModel)]="searchIdentifier" (ngModelChange)="queryClientSalesByIdentifier()" placeholder="Identifier"></th>
+        <th><input name="searchName" type="text" [(ngModel)]="searchName" (ngModelChange)="queryClientSalesByName()" placeholder="Name"></th>
         <th>Price</th>
     </tr>
     <tr *ngFor="let installment of installmentsData; let i = index" rows>
@@ -10,7 +10,7 @@
         <td><input name="price" type="text" value="{{installment.price | currency}}" readonly></td>
     </tr>
 </app-data-table>
-<strong>Daily total:</strong>
+<strong>Total:</strong>
 <app-data-table>
     <tr headers>
         <th>Price</th>
