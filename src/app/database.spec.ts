@@ -8,7 +8,7 @@ describe('Database', () => {
   beforeAll((done) => {
     database = new Database();
     database.setDatabaseAndStore(dbName, storeName);
-    const testData = { id: '1', identifier: 'testIdentifier', name: 'Test' };
+    const testData = { id: '1', saleNumber: 1, identifier: 'testIdentifier', name: 'Test' };
     database.saveData([testData]).then(() => {
       done();
     });
@@ -64,6 +64,12 @@ describe('Database', () => {
   it('should query data by name', async () => {
     const name = 'Test';
     const results = await database.queryByName(name);
+    expect(results.length).toBeGreaterThan(0);
+  });
+
+  it('should query data by sale number', async () => {
+    const saleNumber = 1;
+    const results = await database.queryBySaleNumber(1);
     expect(results.length).toBeGreaterThan(0);
   });
 });

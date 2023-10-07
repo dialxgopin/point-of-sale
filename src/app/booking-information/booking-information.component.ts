@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
 import { Database } from '../database';
 import { Sale } from '../sale';
+import { Booking } from '../booking';
 
 interface BookingDetails {
   id: string;
@@ -41,13 +42,18 @@ export class BookingInformationComponent {
 
   private dbName = 'salesDB';
   private storeName = 'salesStore';
+  private dbBookingsName = 'bookingsDB';
+  private storeBookingsName = 'bookingsStore';
   private database: Database;
+  private bookingsDatabase: Database;
 
   tableDate: Date = new Date();
 
   constructor(private filtersService: FiltersService) {
     this.database = new Database();
     this.database.setDatabaseAndStore(this.dbName, this.storeName);
+    this.bookingsDatabase = new Database();
+    this.bookingsDatabase.setDatabaseAndStore(this.dbBookingsName, this.storeBookingsName);
   }
 
   ngOnInit() {
@@ -61,6 +67,8 @@ export class BookingInformationComponent {
     );
     this.filtersService.rowCount$.subscribe(
       rows => {
+        this.searchIdentifier = '';
+        this.searchName = '';
         this.querySales();
       }
     );
@@ -69,7 +77,7 @@ export class BookingInformationComponent {
   async querySales() {
     const [startDate, endDate] = this.dateOneDayRange();
     const salesData = await this.database.queryByDate(startDate, endDate) as Sale[];
-    this.bookingData = this.formatResults(salesData);
+    this.bookingData = await this.formatResults(salesData);
   }
 
   private dateOneDayRange() {
@@ -86,11 +94,12 @@ export class BookingInformationComponent {
     return [startDate, endDate];
   }
 
-  private formatResults(results: Sale[]): BookingDetails[] {
+  private async formatResults(results: Sale[]): Promise<BookingDetails[]> {
     const bookingData: BookingDetails[] = [];
     for (const sale of results as Sale[]) {
-      const paid = sale.card + sale.cash;
-      const due = sale.price - paid;
+      const paymentSum: number = await this.sumSalePayments(sale.saleNumber);
+      const paid: number = sale.card + sale.cash + paymentSum;
+      const due: number = sale.price - paid;
       const bookingDetail: BookingDetails = {
         id: uuidv4(),
         saleNumber: sale.saleNumber,
@@ -107,11 +116,16 @@ export class BookingInformationComponent {
     return bookingData;
   }
 
+  private async sumSalePayments(saleNumber: number): Promise<number> {
+    const salePayments = await this.bookingsDatabase.queryBySaleNumber(saleNumber) as Booking[];
+    return salePayments.reduce((total, booking) => total + booking.quantity, 0);
+  }
+
   queryClientSalesByIdentifier() {
     this.searchName = '';
     if (this.searchIdentifier.length > 0) {
-      this.database.queryByIdentifier(this.searchIdentifier).then((results) => {
-        this.bookingData = this.formatResults(results);
+      this.database.queryByIdentifier(this.searchIdentifier).then(async (results) => {
+        this.bookingData = await this.formatResults(results);
       }).catch((error) => {
         console.error('Error:', error);
       });
@@ -123,8 +137,8 @@ export class BookingInformationComponent {
   queryClientSalesByName() {
     this.searchIdentifier = '';
     if (this.searchName.length > 0) {
-      this.database.queryByName(this.searchName).then((results) => {
-        this.bookingData = this.formatResults(results);
+      this.database.queryByName(this.searchName).then(async (results) => {
+        this.bookingData = await this.formatResults(results);
       }).catch((error) => {
         console.error('Error:', error);
       });

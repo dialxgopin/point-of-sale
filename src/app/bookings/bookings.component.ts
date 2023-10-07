@@ -3,14 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
 import { Database } from '../database';
 import { Sale } from '../sale';
-
-interface Booking {
-  id: string;
-  identifier: string;
-  name: string;
-  quantity: number;
-  date: Date;
-}
+import { Booking } from '../booking';
 
 interface BookingTotal {
   quantity: number;
@@ -91,6 +84,7 @@ export class BookingsComponent {
   addRow() {
     const newRow: Booking = {
       id: uuidv4(),
+      saleNumber: 0,
       identifier: '',
       name: '',
       quantity: 0,
@@ -102,7 +96,10 @@ export class BookingsComponent {
 
   saveRow(index: number) {
     if (this.identifierPresentAndSaleSelected(index)) {
+      const selectedSale = this.salesData.find((sale) => sale.selected);
+      this.bookingData[index].saleNumber = selectedSale!.saleNumber;
       this.database.saveData([this.bookingData[index]]);
+      this.filtersService.changeRowCount(Math.random());
     }
     this.calculateTotal();
   }

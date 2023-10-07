@@ -31,6 +31,7 @@ export class Database {
         store.createIndex('date', 'date', { unique: false });
         store.createIndex('identifier', 'identifier', { unique: false });
         store.createIndex('name', 'name', { unique: false });
+        store.createIndex('saleNumber', 'saleNumber', { unique: false });
     }
 
     saveData(data: any[]): Promise<void> {
@@ -134,6 +135,35 @@ export class Database {
                 const index = store.index('name');
 
                 const range = IDBKeyRange.only(name);
+                const request = index.openCursor(range);
+
+                const results: any[] = [];
+
+                request.onsuccess = (event) => {
+                    const cursor = (event.target as IDBRequest).result as IDBCursorWithValue;
+                    if (cursor) {
+                        results.push(cursor.value);
+                        cursor.continue();
+                    } else {
+                        resolve(results);
+                    }
+                };
+
+                request.onerror = (event) => {
+                    reject('Error querying data: ' + (event.target as any).error);
+                };
+            });
+        });
+    }
+
+    queryBySaleNumber(saleNumber: number): Promise<any[]> {
+        return this.openDB().then((db) => {
+            return new Promise<any[]>((resolve, reject) => {
+                const transaction = db.transaction(this.storeName, 'readonly');
+                const store = transaction.objectStore(this.storeName);
+                const index = store.index('saleNumber');
+
+                const range = IDBKeyRange.only(saleNumber);
                 const request = index.openCursor(range);
 
                 const results: any[] = [];

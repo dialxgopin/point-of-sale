@@ -84,4 +84,9 @@ describe('BookingInformationComponent', () => {
     expect(component.searchIdentifier).toBe('');
     expect(component.querySales).toHaveBeenCalled();
   });
+
+  it('should sum sale payments', async () => {
+    const result = await component['sumSalePayments'](100);
+    expect(result).toBe(0);
+  });
 });
