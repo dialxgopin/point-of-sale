@@ -7,7 +7,7 @@
     <tr *ngFor="let installment of installmentsData; let i = index" rows>
         <td><input name="identifier" type="text" value="{{installment.identifier}}" readonly></td>
         <td><input name="name" type="text" value="{{installment.name}}" readonly></td>
-        <td><input name="price" type="number" value="{{installment.price}}" readonly></td>
+        <td><input name="price" type="text" value="{{installment.price | currency}}" readonly></td>
     </tr>
 </app-data-table>
 <strong>Daily total:</strong>
@@ -16,6 +16,6 @@
         <th>Price</th>
     </tr>
     <tr rows>
-        <td>{{ installmentsTotal.price }}</td>
+        <td>{{ installmentsTotal.price | currency }}</td>
     </tr>
 </app-data-table>

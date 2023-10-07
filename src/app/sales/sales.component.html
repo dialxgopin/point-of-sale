@@ -27,10 +27,10 @@
         <th>In installments</th>
     </tr>
     <tr rows>
-        <td>{{ saleTotal.price }}</td>
-        <td>{{ saleTotal.card }}</td>
-        <td>{{ saleTotal.cash }}</td>
-        <td>{{ saleTotal.installments }}</td>
+        <td>{{ saleTotal.price | currency }}</td>
+        <td>{{ saleTotal.card | currency }}</td>
+        <td>{{ saleTotal.cash | currency }}</td>
+        <td>{{ saleTotal.installments | currency }}</td>
     </tr>
 </app-data-table>
 <button (click)="addRow()">Add Row</button>
