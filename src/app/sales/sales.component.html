@@ -48,10 +48,10 @@
         <th i18n>In installments</th>
     </tr>
     <tr rows>
-        <td>{{ saleTotal.price | currency }}</td>
-        <td>{{ saleTotal.card | currency }}</td>
-        <td>{{ saleTotal.cash | currency }}</td>
-        <td>{{ saleTotal.installments | currency }}</td>
+        <td>{{ saleTotal.price | currency:'COP' }}</td>
+        <td>{{ saleTotal.card | currency:'COP' }}</td>
+        <td>{{ saleTotal.cash | currency:'COP' }}</td>
+        <td>{{ saleTotal.installments | currency:'COP' }}</td>
     </tr>
 </app-data-table>
 <button *ngIf="!isReadOnly" (click)="addRow()" i18n>Add Row</button>

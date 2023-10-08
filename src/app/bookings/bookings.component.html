@@ -43,7 +43,7 @@
         <th i18n>Quantity</th>
     </tr>
     <tr rows>
-        <td>{{ bookingTotal.quantity | currency }}</td>
+        <td>{{ bookingTotal.quantity | currency:'COP' }}</td>
     </tr>
 </app-data-table>
 <button *ngIf="!isReadOnly" (click)="addRow()" i18n>Add Row</button>

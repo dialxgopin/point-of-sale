@@ -25,7 +25,7 @@
         <th i18n>Price</th>
     </tr>
     <tr rows>
-        <td>{{ expenseTotal.price | currency }}</td>
+        <td>{{ expenseTotal.price | currency:'COP' }}</td>
     </tr>
 </app-data-table>
 <button *ngIf="!isReadOnly" (click)="addRow()" i18n>Add Row</button>

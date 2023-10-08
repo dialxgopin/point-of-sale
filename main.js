@@ -6,7 +6,7 @@ const createWindow = () => {
     height: 600
   })
 
-  mainWindow.loadURL(`file://${__dirname}/dist/point-of-sale/index.html`)
+  mainWindow.loadURL(`file://${__dirname}/dist/point-of-sale/es-CO/index.html`)
   mainWindow.setMenu(null)
 
   // Open the DevTools.

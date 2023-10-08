@@ -13,8 +13,8 @@
         <td><input name="identifier" type="text" [value]="booking.identifier" readonly></td>
         <td><input name="name" type="text" [value]="booking.name" readonly></td>
         <td><input name="item" type="text" [value]="booking.item" readonly></td>
-        <td><input name="price" type="text" [value]="booking.price | currency" readonly></td>
-        <td><input name="paid" type="text" [value]="booking.paid | currency" readonly></td>
-        <td><input name="due" type="text" [value]="booking.due | currency" readonly></td>
+        <td><input name="price" type="text" [value]="booking.price | currency:'COP'" readonly></td>
+        <td><input name="paid" type="text" [value]="booking.paid | currency:'COP'" readonly></td>
+        <td><input name="due" type="text" [value]="booking.due | currency:'COP'" readonly></td>
     </tr>
 </app-data-table>
