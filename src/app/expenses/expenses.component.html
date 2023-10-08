@@ -5,9 +5,18 @@
         <th>Price</th>
     </tr>
     <tr *ngFor="let expense of expenseData; let i = index" rows>
-        <td><input name="identifier" type="text" [(ngModel)]="expense.identifier" (ngModelChange)="saveRow(i)"></td>
-        <td><input name="name" type="text" [(ngModel)]="expense.name" (ngModelChange)="saveRow(i)"></td>
-        <td><input name="price" type="number" [(ngModel)]="expense.price" (ngModelChange)="saveRow(i)"></td>
+        <td>
+            <input name="identifier" type="text" [(ngModel)]="expense.identifier" (ngModelChange)="saveRow(i)"
+                [readonly]="isReadOnly">
+        </td>
+        <td>
+            <input name="name" type="text" [(ngModel)]="expense.name" (ngModelChange)="saveRow(i)"
+                [readonly]="isReadOnly">
+        </td>
+        <td>
+            <input name="price" type="number" [(ngModel)]="expense.price" (ngModelChange)="saveRow(i)"
+                [readonly]="isReadOnly">
+        </td>
     </tr>
 </app-data-table>
 <strong>Daily total:</strong>
@@ -19,4 +28,4 @@
         <td>{{ expenseTotal.price | currency }}</td>
     </tr>
 </app-data-table>
-<button (click)="addRow()">Add Row</button>
+<button *ngIf="!isReadOnly" (click)="addRow()">Add Row</button>

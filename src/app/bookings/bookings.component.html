@@ -5,10 +5,18 @@
         <th>Quantity</th>
     </tr>
     <tr *ngFor="let booking of bookingData; let i = index" rows>
-        <td><input name="identifier" type="text" [(ngModel)]="booking.identifier"
-                (ngModelChange)="queryClientSalesByIdentifier(i)"></td>
-        <td><input name="name" type="text" [(ngModel)]="booking.name" (ngModelChange)="queryClientSalesByName(i)"></td>
-        <td><input name="quantity" type="number" [(ngModel)]="booking.quantity" (ngModelChange)="saveRow(i)"></td>
+        <td>
+            <input name="identifier" type="text" [(ngModel)]="booking.identifier"
+                (ngModelChange)="queryClientSalesByIdentifier(i)" [readonly]="isReadOnly">
+        </td>
+        <td>
+            <input name="name" type="text" [(ngModel)]="booking.name" (ngModelChange)="queryClientSalesByName(i)"
+                [readonly]="isReadOnly">
+        </td>
+        <td>
+            <input name="quantity" type="number" [(ngModel)]="booking.quantity" (ngModelChange)="saveRow(i)"
+                [readonly]="isReadOnly">
+        </td>
     </tr>
 </app-data-table>
 
@@ -38,4 +46,4 @@
         <td>{{ bookingTotal.quantity | currency }}</td>
     </tr>
 </app-data-table>
-<button (click)="addRow()">Add Row</button>
+<button *ngIf="!isReadOnly" (click)="addRow()">Add Row</button>

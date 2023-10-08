@@ -34,6 +34,7 @@ export class ExpensesComponent {
   private database: Database;
 
   tableDate: Date = new Date();
+  isReadOnly: boolean = false;
 
   constructor(private filtersService: FiltersService) {
     this.database = new Database();
@@ -44,8 +45,23 @@ export class ExpensesComponent {
     this.filtersService.tableDate$.subscribe(
       date => {
         this.tableDate = date;
+        this.updateReadOnlyStatus();
         this.refreshInstallmentsDataFromDatabase();
       }
+    );
+    this.updateReadOnlyStatus();
+  }
+
+  private updateReadOnlyStatus() {
+    const today = new Date();
+    this.isReadOnly = !this.isSameDay(this.tableDate, today);
+  }
+
+  private isSameDay(date1: Date, date2: Date): boolean {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
     );
   }
 

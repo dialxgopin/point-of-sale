@@ -9,13 +9,32 @@
         <th>In installments</th>
     </tr>
     <tr *ngFor="let sale of salesData; let i = index" rows>
-        <td><input name="identifier" type="text" [(ngModel)]="sale.identifier" (ngModelChange)="saveRow(i)"></td>
-        <td><input name="name" type="text" [(ngModel)]="sale.name" (ngModelChange)="saveRow(i)"></td>
-        <td><input name="item" type="text" [(ngModel)]="sale.item" (ngModelChange)="saveRow(i)"></td>
-        <td><input name="price" type="number" [(ngModel)]="sale.price" (ngModelChange)="saveRow(i)"></td>
-        <td><input name="card" type="number" [(ngModel)]="sale.card" (ngModelChange)="saveRow(i)"></td>
-        <td><input name="cash" type="number" [(ngModel)]="sale.cash" (ngModelChange)="saveRow(i)"></td>
-        <td><input name="installments" type="number" [(ngModel)]="sale.installments" (ngModelChange)="saveRow(i)"></td>
+        <td>
+            <input name="identifier" type="text" [(ngModel)]="sale.identifier" (ngModelChange)="saveRow(i)"
+                [readonly]="isReadOnly">
+        </td>
+        <td>
+            <input name="name" type="text" [(ngModel)]="sale.name" (ngModelChange)="saveRow(i)" [readonly]="isReadOnly">
+        </td>
+        <td>
+            <input name="item" type="text" [(ngModel)]="sale.item" (ngModelChange)="saveRow(i)" [readonly]="isReadOnly">
+        </td>
+        <td>
+            <input name="price" type="number" [(ngModel)]="sale.price" (ngModelChange)="saveRow(i)"
+                [readonly]="isReadOnly">
+        </td>
+        <td>
+            <input name="card" type="number" [(ngModel)]="sale.card" (ngModelChange)="saveRow(i)"
+                [readonly]="isReadOnly">
+        </td>
+        <td>
+            <input name="cash" type="number" [(ngModel)]="sale.cash" (ngModelChange)="saveRow(i)"
+                [readonly]="isReadOnly">
+        </td>
+        <td>
+            <input name="installments" type="number" [(ngModel)]="sale.installments" (ngModelChange)="saveRow(i)"
+                [readonly]="isReadOnly">
+        </td>
     </tr>
 </app-data-table>
 <strong>Daily total:</strong>
@@ -33,4 +52,4 @@
         <td>{{ saleTotal.installments | currency }}</td>
     </tr>
 </app-data-table>
-<button (click)="addRow()">Add Row</button>
+<button *ngIf="!isReadOnly" (click)="addRow()">Add Row</button>
