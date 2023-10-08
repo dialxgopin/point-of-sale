@@ -1,49 +1,51 @@
 <app-data-table>
     <tr headers>
-        <th>Identifier</th>
-        <th>Customer name</th>
-        <th>Item name</th>
-        <th>Item price</th>
-        <th>Card payment</th>
-        <th>Cash payment</th>
-        <th>In installments</th>
+        <th i18n>Identifier</th>
+        <th i18n>Customer name</th>
+        <th i18n>Item name</th>
+        <th i18n>Item price</th>
+        <th i18n>Card payment</th>
+        <th i18n>Cash payment</th>
+        <th i18n>In installments</th>
     </tr>
     <tr *ngFor="let sale of salesData; let i = index" rows>
         <td>
             <input name="identifier" type="text" [(ngModel)]="sale.identifier" (ngModelChange)="saveRow(i)"
-                [readonly]="isReadOnly">
+                [readonly]="isReadOnly" i18n-placeholder="Identifier">
         </td>
         <td>
-            <input name="name" type="text" [(ngModel)]="sale.name" (ngModelChange)="saveRow(i)" [readonly]="isReadOnly">
+            <input name="name" type="text" [(ngModel)]="sale.name" (ngModelChange)="saveRow(i)" [readonly]="isReadOnly"
+                i18n-placeholder="Customer name">
         </td>
         <td>
-            <input name="item" type="text" [(ngModel)]="sale.item" (ngModelChange)="saveRow(i)" [readonly]="isReadOnly">
+            <input name="item" type="text" [(ngModel)]="sale.item" (ngModelChange)="saveRow(i)" [readonly]="isReadOnly"
+                i18n-placeholder="Item name">
         </td>
         <td>
             <input name="price" type="number" [(ngModel)]="sale.price" (ngModelChange)="saveRow(i)"
-                [readonly]="isReadOnly">
+                [readonly]="isReadOnly" i18n-placeholder="Item price">
         </td>
         <td>
             <input name="card" type="number" [(ngModel)]="sale.card" (ngModelChange)="saveRow(i)"
-                [readonly]="isReadOnly">
+                [readonly]="isReadOnly" i18n-placeholder="Card payment">
         </td>
         <td>
             <input name="cash" type="number" [(ngModel)]="sale.cash" (ngModelChange)="saveRow(i)"
-                [readonly]="isReadOnly">
+                [readonly]="isReadOnly" i18n-placeholder="Cash payment">
         </td>
         <td>
             <input name="installments" type="number" [(ngModel)]="sale.installments" (ngModelChange)="saveRow(i)"
-                [readonly]="isReadOnly">
+                [readonly]="isReadOnly" i18n-placeholder="In installments">
         </td>
     </tr>
 </app-data-table>
-<strong>Daily total:</strong>
+<strong i18n>Daily total:</strong>
 <app-data-table>
     <tr headers>
-        <th>Item price</th>
-        <th>Card payment</th>
-        <th>Cash payment</th>
-        <th>In installments</th>
+        <th i18n>Item price</th>
+        <th i18n>Card payment</th>
+        <th i18n>Cash payment</th>
+        <th i18n>In installments</th>
     </tr>
     <tr rows>
         <td>{{ saleTotal.price | currency }}</td>
@@ -52,4 +54,4 @@
         <td>{{ saleTotal.installments | currency }}</td>
     </tr>
 </app-data-table>
-<button *ngIf="!isReadOnly" (click)="addRow()">Add Row</button>
+<button *ngIf="!isReadOnly" (click)="addRow()" i18n>Add Row</button>

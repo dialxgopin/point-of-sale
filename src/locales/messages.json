@@ -1,0 +1,28 @@
+{
+  "locale": "en-US",
+  "translations": {
+    "6370642728789544052": "Number",
+    "4164796296331721280": "Identifier",
+    "8953033926734869941": "Name",
+    "7711245667123213632": "Item name",
+    "6279368282309126652": "Item price",
+    "8282940047848889809": "Paid",
+    "4799153980390902924": "Due",
+    "6762504134540024018": "Quantity",
+    "991063786109819206": "Select sale",
+    "3973931101896534797": "Date",
+    "4073617600378175118": "Daily total:",
+    "1102066454938175341": "Add Row",
+    "8894377483833272091": "Price",
+    "7349530031233006058": "Total:",
+    "8782485840208773265": "Customer name",
+    "1407795519527284223": "Card payment",
+    "5823010304160365119": "Cash payment",
+    "3766277152702435414": "In installments",
+    "salesTabLabel": "Sales",
+    "installmentsTabLabel": "In installments",
+    "bookingsTabLabel": "Bookings",
+    "bookingInformationTabLabel": "Booking Information",
+    "expensesTabLabel": "Expenses"
+  }
+}

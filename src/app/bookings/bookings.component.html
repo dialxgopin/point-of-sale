@@ -1,8 +1,8 @@
 <app-data-table>
     <tr headers>
-        <th>Identifier</th>
-        <th>Name</th>
-        <th>Quantity</th>
+        <th i18n>Identifier</th>
+        <th i18n>Name</th>
+        <th i18n>Quantity</th>
     </tr>
     <tr *ngFor="let booking of bookingData; let i = index" rows>
         <td>
@@ -22,28 +22,28 @@
 
 <app-data-table *ngIf="salesData.length > 0">
     <tr headers>
-        <th *ngIf="salesData.length > 1">Select sale</th>
-        <th>Number</th>
-        <th>Item name</th>
-        <th>Date</th>
+        <th *ngIf="salesData.length > 1" i18n>Select sale</th>
+        <th i18n>Number</th>
+        <th i18n>Item name</th>
+        <th i18n>Date</th>
     </tr>
     <tr *ngFor="let sale of salesData; let j = index" rows>
         <td *ngIf="salesData.length > 1">
             <input name="selectRow" type="radio" (click)="selectRow(currentWorkingIndex,j)" />
         </td>
-        <td><input name="number" type="number" value="{{sale.saleNumber}}" readonly></td>
-        <td><input name="item" type="text" value="{{sale.item}}" readonly></td>
-        <td><input name="date" type="text" value="{{sale.date | date:'dd/MM/yyyy'}}" readonly></td>
+        <td><input name="number" type="number" [value]="sale.saleNumber" readonly></td>
+        <td><input name="item" type="text" [value]="sale.item" readonly></td>
+        <td><input name="date" type="text" [value]="sale.date | date:'dd/MM/yyyy'" readonly></td>
     </tr>
 </app-data-table>
 
-<strong>Daily total:</strong>
+<strong i18n>Daily total:</strong>
 <app-data-table>
     <tr headers>
-        <th>Quantity</th>
+        <th i18n>Quantity</th>
     </tr>
     <tr rows>
         <td>{{ bookingTotal.quantity | currency }}</td>
     </tr>
 </app-data-table>
-<button *ngIf="!isReadOnly" (click)="addRow()">Add Row</button>
+<button *ngIf="!isReadOnly" (click)="addRow()" i18n>Add Row</button>

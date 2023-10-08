@@ -1,0 +1,28 @@
+{
+  "locale": "es-CO",
+  "translations": {
+    "6370642728789544052": "Número",
+    "4164796296331721280": "Cédula",
+    "8953033926734869941": "Nombre",
+    "7711245667123213632": "Artículo",
+    "6279368282309126652": "Valor artículo",
+    "8282940047848889809": "Abonado",
+    "4799153980390902924": "Falta",
+    "6762504134540024018": "Valor abono",
+    "991063786109819206": "Seleccionar venta",
+    "3973931101896534797": "Fecha",
+    "4073617600378175118": "Total diario:",
+    "1102066454938175341": "Agregar fila",
+    "8894377483833272091": "Valor",
+    "7349530031233006058": "Total:",
+    "8782485840208773265": "Nombre del cliente",
+    "1407795519527284223": "Pago con tarjeta",
+    "5823010304160365119": "Pago en efectivo",
+    "3766277152702435414": "Con crédito",
+    "salesTabLabel": "Ventas",
+    "installmentsTabLabel": "Abono crédito",
+    "bookingsTabLabel": "Abono aporte",
+    "bookingInformationTabLabel": "Información de abonos",
+    "expensesTabLabel": "Egresos"
+  }
+}

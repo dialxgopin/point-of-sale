@@ -1,19 +1,22 @@
 <app-data-table>
     <tr headers>
-        <th><input name="searchIdentifier" type="text" [(ngModel)]="searchIdentifier" (ngModelChange)="queryClientSalesByIdentifier()" placeholder="Identifier"></th>
-        <th><input name="searchName" type="text" [(ngModel)]="searchName" (ngModelChange)="queryClientSalesByName()" placeholder="Name"></th>
-        <th>Price</th>
+        <th><input name="searchIdentifier" type="text" [(ngModel)]="searchIdentifier"
+                (ngModelChange)="queryClientSalesByIdentifier()" placeholder="Identifier"
+                i18n-placeholder="Search by Identifier"></th>
+        <th><input name="searchName" type="text" [(ngModel)]="searchName" (ngModelChange)="queryClientSalesByName()"
+                placeholder="Name" i18n-placeholder="Search by Name"></th>
+        <th i18n>Price</th>
     </tr>
     <tr *ngFor="let installment of installmentsData; let i = index" rows>
-        <td><input name="identifier" type="text" value="{{installment.identifier}}" readonly></td>
-        <td><input name="name" type="text" value="{{installment.name}}" readonly></td>
-        <td><input name="price" type="text" value="{{installment.installments| currency}}" readonly></td>
+        <td><input name="identifier" type="text" [value]="installment.identifier" readonly></td>
+        <td><input name="name" type="text" [value]="installment.name" readonly></td>
+        <td><input name="price" type="text" [value]="installment.installments | currency" readonly></td>
     </tr>
 </app-data-table>
-<strong>Total:</strong>
+<strong i18n>Total:</strong>
 <app-data-table>
     <tr headers>
-        <th>Price</th>
+        <th i18n>Price</th>
     </tr>
     <tr rows>
         <td>{{ installmentsTotal.price | currency }}</td>

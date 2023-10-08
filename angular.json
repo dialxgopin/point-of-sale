@@ -4,6 +4,12 @@
   "newProjectRoot": "projects",
   "projects": {
     "point-of-sale": {
+      "i18n": {
+        "sourceLocale": "en-US",
+        "locales": {
+          "es-CO": "src/locales/messages.es.json"
+        }
+      },
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,6 +19,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "localize": [
+              "es-CO"
+            ],
             "outputPath": "dist/point-of-sale",
             "index": "src/index.html",
             "main": "src/main.ts",

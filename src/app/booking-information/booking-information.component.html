@@ -1,20 +1,20 @@
 <app-data-table>
     <tr headers>
-        <th>Number</th>
-        <th><input name="searchIdentifier" type="text" [(ngModel)]="searchIdentifier" (ngModelChange)="queryClientSalesByIdentifier()" placeholder="Identifier"></th>
-        <th><input name="searchName" type="text" [(ngModel)]="searchName" (ngModelChange)="queryClientSalesByName()" placeholder="Name"></th>
-        <th>Item name</th>
-        <th>Item price</th>
-        <th>Paid</th>
-        <th>Due</th>
+        <th i18n>Number</th>
+        <th><input name="searchIdentifier" type="text" [(ngModel)]="searchIdentifier" (ngModelChange)="queryClientSalesByIdentifier()" placeholder="Identifier" i18n-placeholder="Identifier"></th>
+        <th><input name="searchName" type="text" [(ngModel)]="searchName" (ngModelChange)="queryClientSalesByName()" placeholder="Name" i18n-placeholder="Name"></th>
+        <th i18n>Item name</th>
+        <th i18n>Item price</th>
+        <th i18n>Paid</th>
+        <th i18n>Due</th>
     </tr>
     <tr *ngFor="let booking of bookingData; let i = index" rows>
-        <td><input name="number" type="number" value="{{booking.saleNumber}}" readonly></td>
-        <td><input name="identifier" type="text" value="{{booking.identifier}}" readonly></td>
-        <td><input name="name" type="text" value="{{booking.name}}" readonly></td>
-        <td><input name="item" type="text" value="{{booking.item}}" readonly></td>
-        <td><input name="price" type="text" value="{{booking.price | currency}}" readonly></td>
-        <td><input name="paid" type="text" value="{{booking.paid | currency}}" readonly></td>
-        <td><input name="due" type="text" value="{{booking.due | currency}}" readonly></td>
+        <td><input name="number" type="number" [value]="booking.saleNumber" readonly></td>
+        <td><input name="identifier" type="text" [value]="booking.identifier" readonly></td>
+        <td><input name="name" type="text" [value]="booking.name" readonly></td>
+        <td><input name="item" type="text" [value]="booking.item" readonly></td>
+        <td><input name="price" type="text" [value]="booking.price | currency" readonly></td>
+        <td><input name="paid" type="text" [value]="booking.paid | currency" readonly></td>
+        <td><input name="due" type="text" [value]="booking.due | currency" readonly></td>
     </tr>
 </app-data-table>

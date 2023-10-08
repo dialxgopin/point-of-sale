@@ -1,8 +1,8 @@
 <app-data-table>
     <tr headers>
-        <th>Identifier</th>
-        <th>Name</th>
-        <th>Price</th>
+        <th i18n>Identifier</th>
+        <th i18n>Name</th>
+        <th i18n>Price</th>
     </tr>
     <tr *ngFor="let expense of expenseData; let i = index" rows>
         <td>
@@ -19,13 +19,13 @@
         </td>
     </tr>
 </app-data-table>
-<strong>Daily total:</strong>
+<strong i18n>Daily total:</strong>
 <app-data-table>
     <tr headers>
-        <th>Price</th>
+        <th i18n>Price</th>
     </tr>
     <tr rows>
         <td>{{ expenseTotal.price | currency }}</td>
     </tr>
 </app-data-table>
-<button *ngIf="!isReadOnly" (click)="addRow()">Add Row</button>
+<button *ngIf="!isReadOnly" (click)="addRow()" i18n>Add Row</button>
