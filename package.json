@@ -2,7 +2,7 @@
   "name": "point-of-sale",
   "author": "Diego Gomez",
   "description": "Point of sale cross platform application",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "main.js",
   "scripts": {
     "ng": "ng",
