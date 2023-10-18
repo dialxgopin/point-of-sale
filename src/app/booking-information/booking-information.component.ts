@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
-import { Database } from '../database';
-import { Sale } from '../sale';
-import { Booking } from '../booking';
+import { Sale } from '../models/sale';
+import { Booking } from '../models/booking';
+import { DatabaseService } from '../database.service';
 
 interface BookingDetails {
   id: string;
@@ -40,21 +40,10 @@ export class BookingInformationComponent {
   searchIdentifier: string = '';
   searchName: string = '';
 
-  private dbName = 'salesDB';
-  private storeName = 'salesStore';
-  private dbBookingsName = 'bookingsDB';
-  private storeBookingsName = 'bookingsStore';
-  private database: Database;
-  private bookingsDatabase: Database;
-
   tableDate: Date = new Date();
 
-  constructor(private filtersService: FiltersService) {
-    this.database = new Database();
-    this.database.setDatabaseAndStore(this.dbName, this.storeName);
-    this.bookingsDatabase = new Database();
-    this.bookingsDatabase.setDatabaseAndStore(this.dbBookingsName, this.storeBookingsName);
-  }
+  constructor(private databaseService: DatabaseService,
+    private filtersService: FiltersService) { }
 
   ngOnInit() {
     this.filtersService.tableDate$.subscribe(
@@ -76,7 +65,10 @@ export class BookingInformationComponent {
 
   async querySales() {
     const [startDate, endDate] = this.dateOneDayRange();
-    const salesData = await this.database.queryByDate(startDate, endDate) as Sale[];
+    const salesData = await this.databaseService.sales
+      .where('date')
+      .between(startDate, endDate, true, true)
+      .toArray() as Sale[];
     this.bookingData = await this.formatResults(salesData);
   }
 
@@ -117,31 +109,36 @@ export class BookingInformationComponent {
   }
 
   private async sumSalePayments(saleNumber: number): Promise<number> {
-    const salePayments = await this.bookingsDatabase.queryBySaleNumber(saleNumber) as Booking[];
+    const salePayments = await this.databaseService.bookings
+      .where('saleNumber')
+      .equals(saleNumber)
+      .toArray() as Booking[];
     return salePayments.reduce((total, booking) => total + booking.quantity, 0);
   }
 
-  queryClientSalesByIdentifier() {
+  async queryClientSalesByIdentifier() {
     this.searchName = '';
     if (this.searchIdentifier.length > 0) {
-      this.database.queryByIdentifier(this.searchIdentifier).then(async (results) => {
-        this.bookingData = await this.formatResults(results);
-      }).catch((error) => {
-        console.error('Error:', error);
-      });
+      this.bookingData = await this.formatResults(
+        await this.databaseService.sales
+          .where('identifier')
+          .equals(this.searchIdentifier)
+          .toArray() as Sale[]
+      );
     } else {
       this.querySales();
     }
   }
 
-  queryClientSalesByName() {
+  async queryClientSalesByName() {
     this.searchIdentifier = '';
     if (this.searchName.length > 0) {
-      this.database.queryByName(this.searchName).then(async (results) => {
-        this.bookingData = await this.formatResults(results);
-      }).catch((error) => {
-        console.error('Error:', error);
-      });
+      this.bookingData = await this.formatResults(
+        await this.databaseService.sales
+          .where('name')
+          .equals(this.searchName)
+          .toArray() as Sale[]
+      );
     } else {
       this.querySales();
     }

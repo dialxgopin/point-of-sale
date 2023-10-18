@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
-import { Database } from '../database';
-import { Sale } from '../sale';
+import { Sale } from '../models/sale';
+import { DatabaseService } from '../database.service';
 
 interface Installment {
   id: string;
@@ -33,16 +33,10 @@ export class InstallmentsComponent {
   searchIdentifier: string = '';
   searchName: string = '';
 
-  private dbName = 'salesDB';
-  private storeName = 'salesStore';
-  private database: Database;
-
   tableDate: Date = new Date();
 
-  constructor(private filtersService: FiltersService) {
-    this.database = new Database();
-    this.database.setDatabaseAndStore(this.dbName, this.storeName);
-  }
+  constructor(private databaseService: DatabaseService,
+    private filtersService: FiltersService) { }
 
   ngOnInit() {
     this.filtersService.tableDate$.subscribe(
@@ -62,7 +56,10 @@ export class InstallmentsComponent {
 
   async querySales() {
     const [startDate, endDate] = this.dateOneDayRange();
-    const salesData = await this.database.queryByDate(startDate, endDate) as Sale[];
+    const salesData = await this.databaseService.sales
+      .where('date')
+      .between(startDate, endDate, true, true)
+      .toArray() as Sale[];
     this.installmentsData = salesData;
     this.calculateTotal();
   }
@@ -88,29 +85,27 @@ export class InstallmentsComponent {
     });
   }
 
-  queryClientSalesByIdentifier() {
+  async queryClientSalesByIdentifier() {
     this.searchName = '';
     if (this.searchIdentifier.length > 0) {
-      this.database.queryByIdentifier(this.searchIdentifier).then((results) => {
-        this.installmentsData = results as Sale[];
-        this.calculateTotal();
-      }).catch((error) => {
-        console.error('Error:', error);
-      });
+      this.installmentsData = await this.databaseService.sales
+        .where('identifier')
+        .equals(this.searchIdentifier)
+        .toArray() as Sale[];
+      this.calculateTotal();
     } else {
       this.querySales();
     }
   }
 
-  queryClientSalesByName() {
+  async queryClientSalesByName() {
     this.searchIdentifier = '';
     if (this.searchName.length > 0) {
-      this.database.queryByName(this.searchName).then((results) => {
-        this.installmentsData = results as Sale[];
-        this.calculateTotal();
-      }).catch((error) => {
-        console.error('Error:', error);
-      });
+      this.installmentsData = await this.databaseService.sales
+        .where('name')
+        .equals(this.searchName)
+        .toArray() as Sale[];
+      this.calculateTotal();
     } else {
       this.querySales();
     }

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
-import { Database } from '../database';
-import { Sale } from '../sale';
-import { Booking } from '../booking';
+import { Sale } from '../models/sale';
+import { Booking } from '../models/booking';
+import { DatabaseService } from '../database.service';
 
 interface BookingTotal {
   quantity: number;
@@ -29,22 +29,11 @@ export class BookingsComponent {
 
   currentWorkingIndex: number = 0;
 
-  private dbName = 'bookingsDB';
-  private storeName = 'bookingsStore';
-  private dbSalesName = 'salesDB';
-  private storeSalesName = 'salesStore';
-  private database: Database;
-  private salesDatabase: Database;
-
   tableDate: Date = new Date();
   isReadOnly: boolean = false;
 
-  constructor(private filtersService: FiltersService) {
-    this.database = new Database();
-    this.database.setDatabaseAndStore(this.dbName, this.storeName);
-    this.salesDatabase = new Database();
-    this.salesDatabase.setDatabaseAndStore(this.dbSalesName, this.storeSalesName);
-  }
+  constructor(private databaseService: DatabaseService,
+    private filtersService: FiltersService) { }
 
   ngOnInit() {
     this.filtersService.tableDate$.subscribe(
@@ -71,7 +60,7 @@ export class BookingsComponent {
     );
   }
 
-  refreshBookingsDataFromDatabase() {
+  async refreshBookingsDataFromDatabase() {
     const startDate = new Date(
       this.tableDate.getFullYear(),
       this.tableDate.getMonth(),
@@ -83,12 +72,11 @@ export class BookingsComponent {
       this.tableDate.getDate() + 1
     );
 
-    this.database.queryByDate(startDate, endDate).then((results) => {
-      this.bookingData = results as Booking[];
-      this.calculateTotal();
-    }).catch((error) => {
-      console.error('Error:', error);
-    });
+    this.bookingData = await this.databaseService.bookings
+      .where('date')
+      .between(startDate, endDate, true, true)
+      .toArray();
+    this.calculateTotal();
   }
 
   calculateTotal() {
@@ -115,7 +103,7 @@ export class BookingsComponent {
     if (this.identifierPresentAndSaleSelected(index)) {
       const selectedSale = this.salesData.find((sale) => sale.selected);
       this.bookingData[index].saleNumber = selectedSale!.saleNumber;
-      this.database.saveData([this.bookingData[index]]);
+      this.databaseService.bookings.put(this.bookingData[index]);
       this.filtersService.changeRowCount(Math.random());
     }
     this.calculateTotal();
@@ -126,31 +114,29 @@ export class BookingsComponent {
       this.salesData.some((sale) => sale.selected);
   }
 
-  queryClientSalesByIdentifier(index: number) {
+  async queryClientSalesByIdentifier(index: number) {
     if (this.bookingData[index].identifier) {
       this.currentWorkingIndex = index;
-      this.salesDatabase.queryByIdentifier(this.bookingData[index].identifier).then((results) => {
-        this.salesData = results as ClientSale[];
-        this.bookingData[index].name = results.length > 0 ? results[0].name : '';
-        this.salesData[0].selected = results.length == 1;
-        this.saveRow(index);
-      }).catch((error) => {
-        console.error('Error:', error);
-      });
+      this.salesData = await this.databaseService.sales
+        .where('identifier')
+        .equals(this.bookingData[index].identifier)
+        .toArray() as ClientSale[];
+      this.bookingData[index].name = this.salesData.length > 0 ? this.salesData[0].name : '';
+      this.salesData[0].selected = this.salesData.length == 1;
+      this.saveRow(index);
     }
   }
 
-  queryClientSalesByName(index: number) {
+  async queryClientSalesByName(index: number) {
     if (this.bookingData[index].name) {
       this.currentWorkingIndex = index;
-      this.salesDatabase.queryByName(this.bookingData[index].name).then((results) => {
-        this.salesData = results as ClientSale[];
-        this.bookingData[index].identifier = results.length > 0 ? results[0].identifier : '';
-        this.salesData[0].selected = results.length == 1;
-        this.saveRow(index);
-      }).catch((error) => {
-        console.error('Error:', error);
-      });
+      this.salesData = await this.databaseService.sales
+        .where('name')
+        .equals(this.bookingData[index].name)
+        .toArray() as ClientSale[];
+      this.bookingData[index].identifier = this.salesData.length > 0 ? this.salesData[0].identifier : '';
+      this.salesData[0].selected = this.salesData.length == 1;
+      this.saveRow(index);
     }
   }
 

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
-import { Database } from '../database';
-import { Sale } from '../sale';
+import { Sale } from '../models/sale';
+import { DatabaseService } from '../database.service';
 
 interface SaleTotal {
   price: number;
@@ -39,17 +39,12 @@ export class SalesComponent {
     installments: 0,
   };
 
-  private dbName = 'salesDB';
-  private storeName = 'salesStore';
-  private database: Database;
-
   tableDate: Date = new Date();
   rowCount: number = 0;
   isReadOnly: boolean = false;
 
-  constructor(private filtersService: FiltersService) {
-    this.database = new Database();
-    this.database.setDatabaseAndStore(this.dbName, this.storeName);
+  constructor(private databaseService: DatabaseService,
+    private filtersService: FiltersService) {
     this.getCountOfRows();
   }
 
@@ -78,7 +73,7 @@ export class SalesComponent {
   }
 
   async getCountOfRows() {
-    this.rowCount = await this.database.countRows();
+    this.rowCount = await this.databaseService.sales.count();
   }
 
   async addRow() {
@@ -100,13 +95,13 @@ export class SalesComponent {
 
   saveRow(index: number) {
     if (this.salesData[index].identifier) {
-      this.database.saveData([this.salesData[index]]);
+      this.databaseService.sales.put(this.salesData[index]);
       this.filtersService.changeRowCount(this.salesData.length);
     }
     this.calculateTotal();
   }
 
-  refreshSalesDataFromDatabase() {
+  async refreshSalesDataFromDatabase() {
     const startDate = new Date(
       this.tableDate.getFullYear(),
       this.tableDate.getMonth(),
@@ -118,12 +113,11 @@ export class SalesComponent {
       this.tableDate.getDate() + 1
     );
 
-    this.database.queryByDate(startDate, endDate).then((results) => {
-      this.salesData = results as Sale[];
-      this.calculateTotal();
-    }).catch((error) => {
-      console.error('Error:', error);
-    });
+    this.salesData = await this.databaseService.sales
+      .where('date')
+      .between(startDate, endDate, true, true)
+      .toArray();
+    this.calculateTotal();
   }
 
   calculateTotal() {

@@ -1,23 +1,44 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { ExpensesComponent } from './expenses.component';
 import { FiltersService } from '../filters.service';
+import { DatabaseService } from '../database.service';
+import { BehaviorSubject } from 'rxjs';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { FormsModule } from '@angular/forms';
 
 describe('ExpensesComponent', () => {
   let component: ExpensesComponent;
   let fixture: ComponentFixture<ExpensesComponent>;
-  let filtersService: FiltersService;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  const filtersServiceStub = {
+    tableDate$: new BehaviorSubject<Date>(new Date()),
+  };
+
+  const databaseServiceStub = {
+    expenses: {
+      where: () => ({
+        between: () => ({
+          toArray: () => Promise.resolve([]),
+        }),
+      }),
+      put: () => Promise.resolve(),
+    },
+  };
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       declarations: [ExpensesComponent, DataTableComponent],
       imports: [FormsModule],
-      providers: [FiltersService],
-    });
+      providers: [
+        { provide: FiltersService, useValue: filtersServiceStub },
+        { provide: DatabaseService, useValue: databaseServiceStub },
+      ],
+    }).compileComponents();
+  });
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(ExpensesComponent);
     component = fixture.componentInstance;
-    filtersService = TestBed.inject(FiltersService);
     fixture.detectChanges();
   });
 
@@ -25,39 +46,39 @@ describe('ExpensesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should add a new row', () => {
+  it('should add a row', () => {
     const initialRowCount = component.expenseData.length;
     component.addRow();
-    const finalRowCount = component.expenseData.length;
-    expect(finalRowCount).toBeGreaterThan(initialRowCount);
-    const addedRow = component.expenseData[finalRowCount - 1];
-    expect(addedRow.id).toBeTruthy();
+    expect(component.expenseData.length).toBe(initialRowCount + 1);
   });
 
-  it('should save a row when identifier is present', () => {
-    const index = 0;
-    component.expenseData[index].identifier = 'some-identifier';
-    component.saveRow(index);
-    expect(component.expenseData).toContain(component.expenseData[index]);
-  });
-
-  it('should refresh expenses data from database on table date change', fakeAsync(() => {
-    const newDate = new Date('2023-09-01');
-    filtersService.setDate(newDate);
+  it('should save a row', fakeAsync(() => {
+    component.expenseData = [
+      { id: '1', identifier: 'A', name: 'Expense 1', price: 50, date: new Date() }
+    ];
+    const spyExpensesPut = spyOn(databaseServiceStub.expenses, 'put').and.returnValue(Promise.resolve());
+    component.saveRow(0);
     tick();
-    expect(component.tableDate).toEqual(newDate);
-    component.refreshInstallmentsDataFromDatabase();
-    tick();
-    expect(component.expenseData).not.toEqual([]);
+    expect(spyExpensesPut).toHaveBeenCalled();
   }));
 
-  it('should calculate the total price correctly', () => {
-    const mockExpenses: any[] = [
-      { id: '1', identifier: 'ID1', name: 'Item 1', price: 100, date: new Date() },
-      { id: '2', identifier: 'ID2', name: 'Item 2', price: 50, date: new Date() },
+  it('should refresh data from the database', fakeAsync(() => {
+    const spyExpensesWhere = spyOn(databaseServiceStub.expenses, 'where').and.returnValue({
+      between: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+    });
+    component.refreshInstallmentsDataFromDatabase();
+    tick();
+    expect(spyExpensesWhere).toHaveBeenCalled();
+  }));
+
+  it('should calculate total', () => {
+    component.expenseData = [
+      { id: '1', identifier: 'A', name: 'Expense 1', price: 50, date: new Date() },
+      { id: '2', identifier: 'B', name: 'Expense 2', price: 30, date: new Date() },
     ];
-    component.expenseData = mockExpenses;
     component.calculateTotal();
-    expect(component.expenseTotal.price).toEqual(150);
+    expect(component.expenseTotal.price).toBe(80);
   });
 });

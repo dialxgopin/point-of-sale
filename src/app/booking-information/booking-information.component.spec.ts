@@ -1,17 +1,54 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { BookingInformationComponent } from './booking-information.component';
+import { FiltersService } from '../filters.service';
+import { DatabaseService } from '../database.service';
+import { BehaviorSubject } from 'rxjs';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { FormsModule } from '@angular/forms';
+import { Sale } from '../models/sale';
+import { Booking } from '../models/booking';
 
 describe('BookingInformationComponent', () => {
   let component: BookingInformationComponent;
   let fixture: ComponentFixture<BookingInformationComponent>;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  const filtersServiceStub = {
+    tableDate$: new BehaviorSubject<Date>(new Date()),
+    rowCount$: new BehaviorSubject<number>(0),
+  };
+
+  const databaseServiceStub = {
+    sales: {
+      where: () => ({
+        between: () => ({
+          toArray: () => Promise.resolve([]),
+        }),
+        equals: () => ({
+          toArray: () => Promise.resolve([] as Sale[]),
+        }),
+      }),
+    },
+    bookings: {
+      where: () => ({
+        equals: () => ({
+          toArray: () => Promise.resolve([] as Booking[]),
+        }),
+      }),
+    },
+  };
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       declarations: [BookingInformationComponent, DataTableComponent],
-      imports: [FormsModule]
-    });
+      imports: [FormsModule],
+      providers: [
+        { provide: FiltersService, useValue: filtersServiceStub },
+        { provide: DatabaseService, useValue: databaseServiceStub },
+      ],
+    }).compileComponents();
+  });
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(BookingInformationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -21,60 +58,101 @@ describe('BookingInformationComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should query sales and update booking data on ngOnInit', async () => {
-    await component.ngOnInit();
-    expect(component.bookingData.at(0)).toEqual(
-      {
-        id: jasmine.any(String),
-        saleNumber: jasmine.any(Number),
-        identifier: jasmine.any(String),
-        name: jasmine.any(String),
-        item: jasmine.any(String),
-        price: jasmine.any(Number),
-        paid: jasmine.any(Number),
-        due: jasmine.any(Number),
-        date: jasmine.any(Date),
-      }
-    );
-  });
+  it('should refresh booking data', fakeAsync(() => {
+    const spySalesWhere = spyOn(databaseServiceStub.sales, 'where').and.returnValue({
+      between: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+      equals: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+    });
+    component.querySales();
+    tick();
+    expect(spySalesWhere).toHaveBeenCalled();
+  }));
 
-  it('should update booking data on querySales', async () => {
-    await component.querySales();
-    expect(component.bookingData.length).toBeGreaterThanOrEqual(0);
-  });
+  it('should query client sales by identifier', fakeAsync(() => {
+    component.searchIdentifier = 'test';
+    const spySalesWhere = spyOn(databaseServiceStub.sales, 'where').and.returnValue({
+      between: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+      equals: () => ({
+        toArray: () => Promise.resolve([
+          {
+            id: '1',
+            saleNumber: 1,
+            identifier: 'test',
+            name: 'test',
+            item: 'Item1',
+            price: 25,
+            card: 0,
+            cash: 0,
+            installments: 25,
+            date: new Date()
+          }
+        ]),
+      }),
+    });
+    const spyBookingsWhere = spyOn(databaseServiceStub.bookings, 'where').and.returnValue({
+      equals: () => ({
+        toArray: () => Promise.resolve([
+          { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, date: new Date() },
+          { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 10, date: new Date() }
+        ]),
+      }),
+    });
+    component.queryClientSalesByIdentifier();
+    tick();
+    expect(spySalesWhere).toHaveBeenCalled();
+    expect(spyBookingsWhere).toHaveBeenCalled();
+    expect(component.bookingData.at(0)?.paid).toBe(20);
+    expect(component.bookingData.at(0)?.due).toBe(5);
+  }));
 
-  it('should query client sales by identifier and update bookingData', async () => {
-    component.searchIdentifier = 'testIdentifier';
-    await component.queryClientSalesByIdentifier();
-    expect(component.bookingData.length).toBeGreaterThanOrEqual(0);
-  });
-
-  it('should query client sales by name and update bookingData', async () => {
-    component.searchName = 'Test';
-    await component.queryClientSalesByName();
-    expect(component.bookingData.length).toBeGreaterThanOrEqual(0);
-  });
-
-  it('should reset searchName and query sales when identifier is empty', async () => {
-    spyOn(component, 'querySales');
+  it('should query sales when searchIdentifier is empty', fakeAsync(() => {
     component.searchIdentifier = '';
-    component.searchName = 'Test';
-    await component.queryClientSalesByIdentifier();
-    expect(component.searchName).toBe('');
-    expect(component.querySales).toHaveBeenCalled();
-  });
+    const spySalesWhere = spyOn(databaseServiceStub.sales, 'where').and.returnValue({
+      between: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+      equals: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+    });
+    component.queryClientSalesByIdentifier();
+    tick();
+    expect(spySalesWhere).toHaveBeenCalled();
+  }));
 
-  it('should reset searchIdentifier and query sales when name is empty', async () => {
-    spyOn(component, 'querySales');
+  it('should query client sales by name', fakeAsync(() => {
+    component.searchName = 'test';
+    const spySalesWhere = spyOn(databaseServiceStub.sales, 'where').and.returnValue({
+      between: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+      equals: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+    });
+    component.queryClientSalesByName();
+    tick();
+    expect(spySalesWhere).toHaveBeenCalled();
+  }));
+
+  it('should query sales when searchName is empty', fakeAsync(() => {
     component.searchName = '';
-    component.searchIdentifier = 'testIdentifier';
-    await component.queryClientSalesByName();
-    expect(component.searchIdentifier).toBe('');
-    expect(component.querySales).toHaveBeenCalled();
-  });
-
-  it('should sum sale payments', async () => {
-    const result = await component['sumSalePayments'](100);
-    expect(result).toBe(0);
-  });
+    const spySalesWhere = spyOn(databaseServiceStub.sales, 'where').and.returnValue({
+      between: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+      equals: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+    });
+    component.queryClientSalesByName();
+    tick();
+    expect(spySalesWhere).toHaveBeenCalled();
+  }));
 });

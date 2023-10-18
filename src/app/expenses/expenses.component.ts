@@ -1,15 +1,8 @@
 import { Component } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
-import { Database } from '../database';
-
-interface Expense {
-  id: string;
-  identifier: string;
-  name: string;
-  price: number;
-  date: Date;
-}
+import { Expense } from '../models/expense';
+import { DatabaseService } from '../database.service';
 
 interface ExpenseTotal {
   price: number;
@@ -29,17 +22,11 @@ export class ExpensesComponent {
     price: 0,
   };
 
-  private dbName = 'expenseDB';
-  private storeName = 'expenseStore';
-  private database: Database;
-
   tableDate: Date = new Date();
   isReadOnly: boolean = false;
 
-  constructor(private filtersService: FiltersService) {
-    this.database = new Database();
-    this.database.setDatabaseAndStore(this.dbName, this.storeName);
-  }
+  constructor(private databaseService: DatabaseService,
+    private filtersService: FiltersService) { }
 
   ngOnInit() {
     this.filtersService.tableDate$.subscribe(
@@ -72,12 +59,12 @@ export class ExpensesComponent {
 
   saveRow(index: number) {
     if (this.expenseData[index].identifier) {
-      this.database.saveData([this.expenseData[index]]);
+      this.databaseService.expenses.put(this.expenseData[index]);
     }
     this.calculateTotal();
   }
 
-  refreshInstallmentsDataFromDatabase() {
+  async refreshInstallmentsDataFromDatabase() {
     const startDate = new Date(
       this.tableDate.getFullYear(),
       this.tableDate.getMonth(),
@@ -89,17 +76,15 @@ export class ExpensesComponent {
       this.tableDate.getDate() + 1
     );
 
-    this.database.queryByDate(startDate, endDate).then((results) => {
-      this.expenseData = results as Expense[];
-      this.calculateTotal();
-    }).catch((error) => {
-      console.error('Error:', error);
-    });
+    this.expenseData = await this.databaseService.expenses
+      .where('date')
+      .between(startDate, endDate, true, true)
+      .toArray();
+    this.calculateTotal();
   }
 
   calculateTotal() {
     this.expenseTotal.price = 0;
-
     this.expenseData.forEach((expense) => {
       this.expenseTotal.price += expense.price;
     });
