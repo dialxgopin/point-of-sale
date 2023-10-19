@@ -4,6 +4,7 @@ import { FiltersService } from '../filters.service';
 import { Sale } from '../models/sale';
 import { Booking } from '../models/booking';
 import { DatabaseService } from '../database.service';
+import bigDecimal from 'js-big-decimal';
 
 interface BookingTotal {
   quantity: number;
@@ -82,7 +83,9 @@ export class BookingsComponent {
   calculateTotal() {
     this.bookingTotal.quantity = 0;
     this.bookingData.forEach((booking) => {
-      this.bookingTotal.quantity += booking.quantity;
+      this.bookingTotal.quantity = Number(
+        bigDecimal.add(this.bookingTotal.quantity, booking.quantity)
+      );
     });
   }
 

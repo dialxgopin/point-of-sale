@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
 import { Sale } from '../models/sale';
 import { DatabaseService } from '../database.service';
+import bigDecimal from 'js-big-decimal';
 
 interface Installment {
   id: string;
@@ -81,7 +82,13 @@ export class InstallmentsComponent {
   calculateTotal() {
     this.installmentsTotal.price = 0;
     this.installmentsData.forEach((installment) => {
-      this.installmentsTotal.price += installment.installments;
+      this.installmentsTotal.price = Number(
+        bigDecimal
+          .add(
+            this.installmentsTotal.price,
+            installment.installments
+          )
+      );
     });
   }
 

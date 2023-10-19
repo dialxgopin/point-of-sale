@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
 import { Expense } from '../models/expense';
 import { DatabaseService } from '../database.service';
+import bigDecimal from 'js-big-decimal';
 
 interface ExpenseTotal {
   price: number;
@@ -86,7 +87,10 @@ export class ExpensesComponent {
   calculateTotal() {
     this.expenseTotal.price = 0;
     this.expenseData.forEach((expense) => {
-      this.expenseTotal.price += expense.price;
+      this.expenseTotal.price = Number(
+        bigDecimal
+          .add(this.expenseTotal.price, expense.price)
+      );
     });
   }
 }

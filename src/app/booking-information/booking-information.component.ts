@@ -4,6 +4,7 @@ import { FiltersService } from '../filters.service';
 import { Sale } from '../models/sale';
 import { Booking } from '../models/booking';
 import { DatabaseService } from '../database.service';
+import bigDecimal from 'js-big-decimal';
 
 interface BookingDetails {
   id: string;
@@ -90,8 +91,16 @@ export class BookingInformationComponent {
     const bookingData: BookingDetails[] = [];
     for (const sale of results as Sale[]) {
       const paymentSum: number = await this.sumSalePayments(sale.saleNumber);
-      const paid: number = sale.card + sale.cash + paymentSum;
-      const due: number = sale.price - paid;
+      const paid: number = Number(
+        bigDecimal
+          .add(
+            +bigDecimal.add(sale.card, sale.cash),
+            paymentSum
+          )
+      );
+      const due: number = Number(
+        bigDecimal.subtract(sale.price, paid)
+      );
       const bookingDetail: BookingDetails = {
         id: uuidv4(),
         saleNumber: sale.saleNumber,
@@ -113,7 +122,10 @@ export class BookingInformationComponent {
       .where('saleNumber')
       .equals(saleNumber)
       .toArray() as Booking[];
-    return salePayments.reduce((total, booking) => total + booking.quantity, 0);
+    return salePayments.reduce((total, booking) => Number(
+      bigDecimal
+        .add(total, booking.quantity)
+    ), 0);
   }
 
   async queryClientSalesByIdentifier() {

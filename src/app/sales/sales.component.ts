@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FiltersService } from '../filters.service';
 import { Sale } from '../models/sale';
 import { DatabaseService } from '../database.service';
+import bigDecimal from 'js-big-decimal';
 
 interface SaleTotal {
   price: number;
@@ -127,10 +128,32 @@ export class SalesComponent {
     this.saleTotal.installments = 0;
 
     this.salesData.forEach((sale) => {
-      this.saleTotal.price += sale.price;
-      this.saleTotal.card += sale.card;
-      this.saleTotal.cash += sale.cash;
-      this.saleTotal.installments += sale.installments;
+      this.saleTotal.price = Number(
+        bigDecimal
+          .add(
+            this.saleTotal.price,
+            sale.price
+          )
+      );
+      this.saleTotal.card = Number(
+        bigDecimal.add(
+          this.saleTotal.card,
+          sale.card
+        )
+      );
+      this.saleTotal.cash = Number(
+        bigDecimal
+          .add(
+            this.saleTotal.cash,
+            sale.cash
+          )
+      );
+      this.saleTotal.installments = Number(
+        bigDecimal.add(
+          this.saleTotal.installments,
+          sale.installments
+        )
+      );
     });
   }
 }
