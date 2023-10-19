@@ -26,12 +26,12 @@
                 [readonly]="isReadOnly" i18n-placeholder="Item price">
         </td>
         <td>
-            <input name="card" currencyMask [(ngModel)]="sale.card" (ngModelChange)="saveRow(i)"
-                [readonly]="isReadOnly" i18n-placeholder="Card payment">
+            <input name="card" currencyMask [(ngModel)]="sale.card" (ngModelChange)="saveRow(i)" [readonly]="isReadOnly"
+                i18n-placeholder="Card payment">
         </td>
         <td>
-            <input name="cash" currencyMask [(ngModel)]="sale.cash" (ngModelChange)="saveRow(i)"
-                [readonly]="isReadOnly" i18n-placeholder="Cash payment">
+            <input name="cash" currencyMask [(ngModel)]="sale.cash" (ngModelChange)="saveRow(i)" [readonly]="isReadOnly"
+                i18n-placeholder="Cash payment">
         </td>
         <td>
             <input name="installments" currencyMask [(ngModel)]="sale.installments" (ngModelChange)="saveRow(i)"
@@ -46,12 +46,16 @@
         <th i18n>Card payment</th>
         <th i18n>Cash payment</th>
         <th i18n>In installments</th>
+        <th i18n>Expenses</th>
+        <th i18n>Balance</th>
     </tr>
     <tr rows>
         <td>{{ saleTotal.price | currency:'COP' }}</td>
         <td>{{ saleTotal.card | currency:'COP' }}</td>
         <td>{{ saleTotal.cash | currency:'COP' }}</td>
         <td>{{ saleTotal.installments | currency:'COP' }}</td>
+        <td>{{ saleTotal.expenses| currency:'COP' }}</td>
+        <td>{{ saleTotal.balance| currency:'COP' }}</td>
     </tr>
 </app-data-table>
 <button *ngIf="!isReadOnly" (click)="addRow()" i18n>New sale</button>

@@ -10,6 +10,8 @@ interface SaleTotal {
   card: number;
   cash: number;
   installments: number;
+  expenses: number;
+  balance: number;
 }
 
 @Component({
@@ -38,6 +40,8 @@ export class SalesComponent {
     card: 0,
     cash: 0,
     installments: 0,
+    expenses: 0,
+    balance: 0
   };
 
   tableDate: Date = new Date();
@@ -58,6 +62,12 @@ export class SalesComponent {
       }
     );
     this.updateReadOnlyStatus();
+    this.filtersService.expenseTotal$.subscribe(
+      quantity => {
+        this.saleTotal.expenses = quantity;
+        this.calculateTotal();
+      }
+    );
   }
 
   private updateReadOnlyStatus() {
@@ -155,5 +165,12 @@ export class SalesComponent {
         )
       );
     });
+
+    this.saleTotal.balance = Number(
+      bigDecimal.subtract(
+        this.saleTotal.cash,
+        this.saleTotal.expenses
+      )
+    );
   }
 }

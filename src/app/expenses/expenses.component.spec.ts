@@ -12,6 +12,7 @@ describe('ExpensesComponent', () => {
 
   const filtersServiceStub = {
     tableDate$: new BehaviorSubject<Date>(new Date()),
+    updateTotalExpense: () => { },
   };
 
   const databaseServiceStub = {
@@ -68,7 +69,7 @@ describe('ExpensesComponent', () => {
         toArray: () => Promise.resolve([]),
       }),
     });
-    component.refreshInstallmentsDataFromDatabase();
+    component.refreshExpenseDataFromDatabase();
     tick();
     expect(spyExpensesWhere).toHaveBeenCalled();
   }));

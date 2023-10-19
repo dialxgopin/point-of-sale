@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { SalesComponent } from './sales.component';
 import { FiltersService } from '../filters.service';
 import { DatabaseService } from '../database.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { FormsModule } from '@angular/forms';
 
@@ -12,6 +12,7 @@ describe('SalesComponent', () => {
 
   const filtersServiceStub = {
     tableDate$: new BehaviorSubject<Date>(new Date()),
+    expenseTotal$: of(9),
     changeRowCount: () => { },
   };
 
@@ -124,5 +125,7 @@ describe('SalesComponent', () => {
     expect(component.saleTotal.card).toBe(15);
     expect(component.saleTotal.cash).toBe(10);
     expect(component.saleTotal.installments).toBe(0.3);
+    expect(component.saleTotal.expenses).toEqual(9);
+    expect(component.saleTotal.balance).toEqual(1);//
   });
 });

@@ -34,7 +34,7 @@ export class ExpensesComponent {
       date => {
         this.tableDate = date;
         this.updateReadOnlyStatus();
-        this.refreshInstallmentsDataFromDatabase();
+        this.refreshExpenseDataFromDatabase();
       }
     );
     this.updateReadOnlyStatus();
@@ -65,7 +65,7 @@ export class ExpensesComponent {
     this.calculateTotal();
   }
 
-  async refreshInstallmentsDataFromDatabase() {
+  async refreshExpenseDataFromDatabase() {
     const startDate = new Date(
       this.tableDate.getFullYear(),
       this.tableDate.getMonth(),
@@ -92,5 +92,6 @@ export class ExpensesComponent {
           .add(this.expenseTotal.price, expense.price)
       );
     });
+    this.filtersService.updateTotalExpense(this.expenseTotal.price);
   }
 }
