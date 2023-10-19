@@ -14,7 +14,7 @@
                 [readonly]="isReadOnly">
         </td>
         <td>
-            <input name="quantity" type="number" [(ngModel)]="booking.quantity" (ngModelChange)="saveRow(i)"
+            <input name="quantity" currencyMask [(ngModel)]="booking.quantity" (ngModelChange)="saveRow(i)"
                 [readonly]="isReadOnly">
         </td>
     </tr>

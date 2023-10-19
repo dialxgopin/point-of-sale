@@ -22,19 +22,19 @@
                 i18n-placeholder="Item name">
         </td>
         <td>
-            <input name="price" type="number" [(ngModel)]="sale.price" (ngModelChange)="saveRow(i)"
+            <input name="price" currencyMask [(ngModel)]="sale.price" (ngModelChange)="saveRow(i)"
                 [readonly]="isReadOnly" i18n-placeholder="Item price">
         </td>
         <td>
-            <input name="card" type="number" [(ngModel)]="sale.card" (ngModelChange)="saveRow(i)"
+            <input name="card" currencyMask [(ngModel)]="sale.card" (ngModelChange)="saveRow(i)"
                 [readonly]="isReadOnly" i18n-placeholder="Card payment">
         </td>
         <td>
-            <input name="cash" type="number" [(ngModel)]="sale.cash" (ngModelChange)="saveRow(i)"
+            <input name="cash" currencyMask [(ngModel)]="sale.cash" (ngModelChange)="saveRow(i)"
                 [readonly]="isReadOnly" i18n-placeholder="Cash payment">
         </td>
         <td>
-            <input name="installments" type="number" [(ngModel)]="sale.installments" (ngModelChange)="saveRow(i)"
+            <input name="installments" currencyMask [(ngModel)]="sale.installments" (ngModelChange)="saveRow(i)"
                 [readonly]="isReadOnly" i18n-placeholder="In installments">
         </td>
     </tr>

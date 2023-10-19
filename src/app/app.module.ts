@@ -15,6 +15,17 @@ import { SalesComponent } from './sales/sales.component';
 import { BookingsComponent } from './bookings/bookings.component';
 import { BookingInformationComponent } from './booking-information/booking-information.component';
 import { ExpensesComponent } from './expenses/expenses.component';
+import { CurrencyMaskConfig, CurrencyMaskModule, CURRENCY_MASK_CONFIG } from "ng2-currency-mask";
+
+export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
+  align: "right",
+  allowNegative: false,
+  decimal: ",",
+  precision: 0,
+  prefix: "$ ",
+  suffix: "",
+  thousands: "."
+};
 
 @NgModule({
   declarations: [
@@ -35,9 +46,13 @@ import { ExpensesComponent } from './expenses/expenses.component';
     MatTabsModule,
     MatFormFieldModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    CurrencyMaskModule
   ],
-  providers: [{provide: MAT_DATE_LOCALE, useValue: 'es-CO'},],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'es-CO' },
+    { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
