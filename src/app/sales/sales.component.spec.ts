@@ -86,6 +86,7 @@ describe('SalesComponent', () => {
       price: 10,
       card: 5,
       cash: 5,
+      transfer: 0,
       installments: 0,
       date: new Date()
     }];
@@ -117,6 +118,7 @@ describe('SalesComponent', () => {
         price: 10,
         card: 5,
         cash: 5,
+        transfer: 1,
         installments: 0.1,
         date: new Date()
       },
@@ -129,6 +131,7 @@ describe('SalesComponent', () => {
         price: 15,
         card: 10,
         cash: 5,
+        transfer: 1,
         installments: 0.2,
         date: new Date()
       },
@@ -137,6 +140,7 @@ describe('SalesComponent', () => {
     expect(component.saleTotal.price).toBe(25);
     expect(component.saleTotal.card).toBe(15);
     expect(component.saleTotal.cash).toBe(10);
+    expect(component.saleTotal.transfer).toBe(2);
     expect(component.saleTotal.installments).toBe(0.3);
     expect(component.saleTotal.expenses).toEqual(9);
     expect(component.saleTotal.balance).toEqual(1);

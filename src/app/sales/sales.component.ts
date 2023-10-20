@@ -9,6 +9,7 @@ interface SaleTotal {
   price: number;
   card: number;
   cash: number;
+  transfer: number;
   installments: number;
   expenses: number;
   balance: number;
@@ -30,6 +31,7 @@ export class SalesComponent {
       price: 0,
       card: 0,
       cash: 0,
+      transfer: 0,
       installments: 0,
       date: new Date(),
     },
@@ -39,6 +41,7 @@ export class SalesComponent {
     price: 0,
     card: 0,
     cash: 0,
+    transfer: 0,
     installments: 0,
     expenses: 0,
     balance: 0
@@ -98,6 +101,7 @@ export class SalesComponent {
       price: 0,
       card: 0,
       cash: 0,
+      transfer: 0,
       installments: 0,
       date: this.tableDate,
     };
@@ -135,6 +139,7 @@ export class SalesComponent {
     this.saleTotal.price = 0;
     this.saleTotal.card = 0;
     this.saleTotal.cash = 0;
+    this.saleTotal.transfer = 0;
     this.saleTotal.installments = 0;
 
     this.salesData.forEach((sale) => {
@@ -156,6 +161,13 @@ export class SalesComponent {
           .add(
             this.saleTotal.cash,
             sale.cash
+          )
+      );
+      this.saleTotal.transfer = Number(
+        bigDecimal
+          .add(
+            this.saleTotal.transfer,
+            sale.transfer
           )
       );
       this.saleTotal.installments = Number(

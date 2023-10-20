@@ -7,6 +7,7 @@ export interface Sale {
     price: number;
     card: number;
     cash: number;
+    transfer: number;
     installments: number;
     date: Date;
 }

@@ -20,7 +20,7 @@ export class DatabaseService extends Dexie {
     super('appDB');
 
     this.version(1).stores({
-      sales: 'id,saleNumber,identifier,name,item,price,card,cash,installments,date',
+      sales: 'id,saleNumber,identifier,name,item,price,card,cash,transfer,installments,date',
       bookings: 'id,saleNumber,identifier,name,quantity,date',
       expenses: 'id,identifier,name,price,date',
       banks: 'id,name',
