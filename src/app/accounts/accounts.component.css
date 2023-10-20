@@ -1,0 +1,8 @@
+.containerTables {
+    display: flex;
+    flex-direction: row;
+}
+
+.accountTable {
+    width: 50%;
+}

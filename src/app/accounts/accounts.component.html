@@ -1,0 +1,30 @@
+<div class="containerTables">
+    <div class="accountTable">
+        <app-data-table>
+            <tr (click)="toggleTableBodyVisibility()" headers>
+                <th i18n>Banks</th>
+            </tr>
+            <tr *ngFor="let bank of banksData; let i = index" rows>
+                <td *ngIf="isVisibleTableBody">
+                    <input name="bankName" type="text" [(ngModel)]="bank.name" (ngModelChange)="saveBank(i)"
+                        i18n-placeholder="Bank Name">
+                </td>
+            </tr>
+        </app-data-table>
+        <button *ngIf="isVisibleTableBody" (click)="addBank()" i18n>New bank</button>
+    </div>
+    <div class="accountTable">
+        <app-data-table>
+            <tr (click)="toggleTableBodyVisibility()" headers>
+                <th i18n>Credit Systems</th>
+            </tr>
+            <tr *ngFor="let creditSystem of creditSystemsData; let i = index" rows>
+                <td *ngIf="isVisibleTableBody">
+                    <input name="creditSystemName" type="text" [(ngModel)]="creditSystem.name"
+                        (ngModelChange)="saveCreditSystem(i)" i18n-placeholder="Credit System Name">
+                </td>
+            </tr>
+        </app-data-table>
+        <button *ngIf="isVisibleTableBody" (click)="addCreditSystem()" i18n>New Credit System</button>
+    </div>
+</div>

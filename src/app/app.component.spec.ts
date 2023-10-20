@@ -12,6 +12,7 @@ import { SalesComponent } from './sales/sales.component';
 import { BookingsComponent } from './bookings/bookings.component';
 import { BookingInformationComponent } from './booking-information/booking-information.component';
 import { ExpensesComponent } from './expenses/expenses.component';
+import { AccountsComponent } from './accounts/accounts.component';
 
 describe('AppComponent', () => {
   let filtersService: FiltersService;
@@ -31,7 +32,8 @@ describe('AppComponent', () => {
       SalesComponent,
       BookingsComponent,
       BookingInformationComponent,
-      ExpensesComponent
+      ExpensesComponent,
+      AccountsComponent
     ],
     providers: [FiltersService]
   }));

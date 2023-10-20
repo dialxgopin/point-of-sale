@@ -16,6 +16,7 @@ import { BookingsComponent } from './bookings/bookings.component';
 import { BookingInformationComponent } from './booking-information/booking-information.component';
 import { ExpensesComponent } from './expenses/expenses.component';
 import { CurrencyMaskConfig, CurrencyMaskModule, CURRENCY_MASK_CONFIG } from "ng2-currency-mask";
+import { AccountsComponent } from './accounts/accounts.component';
 
 export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
   align: "right",
@@ -37,7 +38,8 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     SalesComponent,
     BookingsComponent,
     BookingInformationComponent,
-    ExpensesComponent
+    ExpensesComponent,
+    AccountsComponent
   ],
   imports: [
     BrowserModule,

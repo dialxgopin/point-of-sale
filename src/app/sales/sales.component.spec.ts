@@ -5,6 +5,7 @@ import { DatabaseService } from '../database.service';
 import { BehaviorSubject, of } from 'rxjs';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { FormsModule } from '@angular/forms';
+import { AccountsComponent } from '../accounts/accounts.component';
 
 describe('SalesComponent', () => {
   let component: SalesComponent;
@@ -26,11 +27,23 @@ describe('SalesComponent', () => {
         }),
       }),
     },
+    banks: {
+      put: jasmine.createSpy(),
+      toArray: jasmine.createSpy().and.returnValue(Promise.resolve([])),
+    },
+    creditSystems: {
+      put: jasmine.createSpy(),
+      toArray: jasmine.createSpy().and.returnValue(Promise.resolve([])),
+    },
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SalesComponent, DataTableComponent],
+      declarations: [
+        SalesComponent,
+        DataTableComponent,
+        AccountsComponent
+      ],
       imports: [FormsModule],
       providers: [
         { provide: FiltersService, useValue: filtersServiceStub },
@@ -126,6 +139,6 @@ describe('SalesComponent', () => {
     expect(component.saleTotal.cash).toBe(10);
     expect(component.saleTotal.installments).toBe(0.3);
     expect(component.saleTotal.expenses).toEqual(9);
-    expect(component.saleTotal.balance).toEqual(1);//
+    expect(component.saleTotal.balance).toEqual(1);
   });
 });
