@@ -65,11 +65,38 @@ describe('InstallmentsComponent', () => {
 
   it('should calculate total', () => {
     component.installmentsData = [
-      { id: '1', identifier: 'test', name: 'test', installments: 10, date: new Date() },
-      { id: '2', identifier: 'test', name: 'test', installments: 15, date: new Date() },
+      {
+        id: '1',
+        saleNumber: 1,
+        identifier: 'test',
+        name: 'test',
+        item: 'Item1',
+        price: 10,
+        card: 5,
+        cash: 5,
+        transfer: [{ quantity: 1, method: 'Method 1' }],
+        installments: [{ quantity: 0.1, method: 'Method 2' }],
+        date: new Date()
+      },
+      {
+        id: '2',
+        saleNumber: 2,
+        identifier: 'test',
+        name: 'test',
+        item: 'Item2',
+        price: 15,
+        card: 10,
+        cash: 5,
+        transfer: [{ quantity: 1, method: 'Method 1' }],
+        installments: [{ quantity: 0.2, method: 'Method 2' }],
+        date: new Date()
+      },
     ];
     component.calculateTotal();
-    expect(component.installmentsTotal.price).toBe(25);
+    expect(component.installmentsTotal.card).toBe(15);
+    expect(component.installmentsTotal.cash).toBe(10);
+    expect(component.installmentsTotal.transfer).toBe(2);
+    expect(component.installmentsTotal.installments).toBe(0.3);
   });
 
   it('should query sales by identifier', fakeAsync(() => {

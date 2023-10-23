@@ -4,6 +4,8 @@ import { FiltersService } from '../filters.service';
 import { Sale } from '../models/sale';
 import { DatabaseService } from '../database.service';
 import bigDecimal from 'js-big-decimal';
+import { Bank } from '../models/bank';
+import { CreditSystem } from '../models/credit-system';
 
 interface SaleTotal {
   price: number;
@@ -31,8 +33,8 @@ export class SalesComponent {
       price: 0,
       card: 0,
       cash: 0,
-      transfer: 0,
-      installments: 0,
+      transfer: [],
+      installments: [],
       date: new Date(),
     },
   ];
@@ -46,6 +48,9 @@ export class SalesComponent {
     expenses: 0,
     balance: 0
   };
+
+  banks: Bank[] = [];
+  creditSystems: CreditSystem[] = [];
 
   tableDate: Date = new Date();
   rowCount: number = 0;
@@ -69,6 +74,13 @@ export class SalesComponent {
       quantity => {
         this.saleTotal.expenses = quantity;
         this.calculateTotal();
+      }
+    );
+    this.filtersService.accounts$.subscribe(
+      async accounts => {
+        await this.getBanks();
+        await this.getCreditSystems();
+        this.refreshSalesDataFromDatabase();
       }
     );
   }
@@ -101,8 +113,8 @@ export class SalesComponent {
       price: 0,
       card: 0,
       cash: 0,
-      transfer: 0,
-      installments: 0,
+      transfer: [{ quantity: 0, method: '' }],
+      installments: [{ quantity: 0, method: '' }],
       date: this.tableDate,
     };
     this.salesData.push(newRow);
@@ -163,19 +175,24 @@ export class SalesComponent {
             sale.cash
           )
       );
-      this.saleTotal.transfer = Number(
-        bigDecimal
-          .add(
-            this.saleTotal.transfer,
-            sale.transfer
-          )
-      );
-      this.saleTotal.installments = Number(
-        bigDecimal.add(
-          this.saleTotal.installments,
-          sale.installments
-        )
-      );
+      sale.transfer.forEach((transfer) => {
+        this.saleTotal.transfer = Number(
+          bigDecimal
+            .add(
+              this.saleTotal.transfer,
+              transfer.quantity
+            )
+        );
+      });
+      sale.installments.forEach((installment) => {
+        this.saleTotal.installments = Number(
+          bigDecimal
+            .add(
+              this.saleTotal.installments,
+              installment.quantity
+            )
+        );
+      });
     });
 
     this.saleTotal.balance = Number(
@@ -184,5 +201,21 @@ export class SalesComponent {
         this.saleTotal.expenses
       )
     );
+  }
+
+  async getBanks() {
+    this.banks = await this.databaseService.banks.toArray();
+  }
+
+  async getCreditSystems() {
+    this.creditSystems = await this.databaseService.creditSystems.toArray();
+  }
+
+  addTransfer(index: number) {
+    this.salesData[index].transfer.push({ quantity: 0, method: '' });
+  }
+
+  addInstallment(index: number) {
+    this.salesData[index].installments.push({ quantity: 0, method: '' });
   }
 }

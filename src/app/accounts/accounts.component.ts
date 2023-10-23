@@ -42,14 +42,14 @@ export class AccountsComponent {
   saveBank(index: number) {
     if (this.banksData[index].name) {
       this.databaseService.banks.put(this.banksData[index]);
-      this.filtersService.changeRowCount(Math.random());
+      this.filtersService.updateAccounts(Math.random());
     }
   }
 
   saveCreditSystem(index: number) {
     if (this.creditSystemsData[index].name) {
       this.databaseService.creditSystems.put(this.creditSystemsData[index]);
-      this.filtersService.changeRowCount(Math.random());
+      this.filtersService.updateAccounts(Math.random());
     }
   }
 

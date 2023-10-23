@@ -5,20 +5,42 @@
                 i18n-placeholder="Search by Identifier"></th>
         <th><input name="searchName" type="text" [(ngModel)]="searchName" (ngModelChange)="queryClientSalesByName()"
                 placeholder="Name" i18n-placeholder="Search by Name"></th>
-        <th i18n>Price</th>
+        <th i18n>Card payment</th>
+        <th i18n>Cash payment</th>
+        <th i18n>Transfer payment</th>
+        <th i18n>In installments</th>
     </tr>
     <tr *ngFor="let installment of installmentsData; let i = index" rows>
         <td><input name="identifier" type="text" [value]="installment.identifier" readonly></td>
         <td><input name="name" type="text" [value]="installment.name" readonly></td>
-        <td><input name="price" type="text" [value]="installment.installments | currency:'COP'" readonly></td>
+        <td><input name="card" type="text" [value]="installment.card | currency:'COP'" readonly></td>
+        <td><input name="cash" type="text" [value]="installment.cash | currency:'COP'" readonly></td>
+        <td>
+            <tr *ngFor="let transfer of installment.transfer; let j = index">
+                {{transfer.quantity | currency:'COP'}}
+                {{transfer.method}}
+            </tr>
+        </td>
+        <td>
+            <tr *ngFor="let installment of installment.installments; let k = index">
+                {{installment.quantity | currency:'COP'}}
+                {{installment.method}}
+            </tr>
+        </td>
     </tr>
 </app-data-table>
 <strong i18n>Total:</strong>
 <app-data-table>
     <tr headers>
-        <th i18n>Price</th>
+        <th i18n>Card payment</th>
+        <th i18n>Cash payment</th>
+        <th i18n>Transfer payment</th>
+        <th i18n>In installments</th>
     </tr>
     <tr rows>
-        <td>{{ installmentsTotal.price | currency:'COP' }}</td>
+        <td>{{ installmentsTotal.card | currency:'COP' }}</td>
+        <td>{{ installmentsTotal.cash | currency:'COP' }}</td>
+        <td>{{ installmentsTotal.transfer | currency:'COP' }}</td>
+        <td>{{ installmentsTotal.installments | currency:'COP' }}</td>
     </tr>
 </app-data-table>

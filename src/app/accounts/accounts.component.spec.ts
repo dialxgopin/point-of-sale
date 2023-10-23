@@ -4,7 +4,6 @@ import { Bank } from '../models/bank';
 import { CreditSystem } from '../models/credit-system';
 import { DatabaseService } from '../database.service';
 import { FiltersService } from '../filters.service';
-import { of } from 'rxjs';
 import { DataTableComponent } from '../data-table/data-table.component';
 
 describe('AccountsComponent', () => {
@@ -23,7 +22,7 @@ describe('AccountsComponent', () => {
   };
 
   const filtersServiceStub = {
-    changeRowCount: jasmine.createSpy(),
+    updateAccounts: jasmine.createSpy(),
   };
 
   beforeEach(async () => {
@@ -62,7 +61,7 @@ describe('AccountsComponent', () => {
     component.banksData.push(bank);
     component.saveBank(0);
     expect(databaseServiceStub.banks.put).toHaveBeenCalledWith(bank);
-    expect(filtersServiceStub.changeRowCount).toHaveBeenCalled();
+    expect(filtersServiceStub.updateAccounts).toHaveBeenCalled();
   });
 
   it('should save a credit system', () => {
@@ -70,7 +69,7 @@ describe('AccountsComponent', () => {
     component.creditSystemsData.push(creditSystem);
     component.saveCreditSystem(0);
     expect(databaseServiceStub.creditSystems.put).toHaveBeenCalledWith(creditSystem);
-    expect(filtersServiceStub.changeRowCount).toHaveBeenCalled();
+    expect(filtersServiceStub.updateAccounts).toHaveBeenCalled();
   });
 
   it('should fetch banks', async () => {

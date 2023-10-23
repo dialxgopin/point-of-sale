@@ -14,6 +14,7 @@ describe('SalesComponent', () => {
   const filtersServiceStub = {
     tableDate$: new BehaviorSubject<Date>(new Date()),
     expenseTotal$: of(9),
+    accounts$: of(0),
     changeRowCount: () => { },
   };
 
@@ -86,8 +87,8 @@ describe('SalesComponent', () => {
       price: 10,
       card: 5,
       cash: 5,
-      transfer: 0,
-      installments: 0,
+      transfer: [{ quantity: 10, method: 'Method 1' }],
+      installments: [{ quantity: 15, method: 'Method 2' }],
       date: new Date()
     }];
     component.saveRow(0);
@@ -118,8 +119,8 @@ describe('SalesComponent', () => {
         price: 10,
         card: 5,
         cash: 5,
-        transfer: 1,
-        installments: 0.1,
+        transfer: [{ quantity: 1, method: 'Method 1' }],
+        installments: [{ quantity: 0.1, method: 'Method 2' }],
         date: new Date()
       },
       {
@@ -131,8 +132,8 @@ describe('SalesComponent', () => {
         price: 15,
         card: 10,
         cash: 5,
-        transfer: 1,
-        installments: 0.2,
+        transfer: [{ quantity: 1, method: 'Method 1' }],
+        installments: [{ quantity: 0.2, method: 'Method 2' }],
         date: new Date()
       },
     ];
@@ -145,4 +146,24 @@ describe('SalesComponent', () => {
     expect(component.saleTotal.expenses).toEqual(9);
     expect(component.saleTotal.balance).toEqual(1);
   });
+
+  it('should add a transfer to a sale', () => {
+    const index = 0;
+    component.addTransfer(index);
+    const sale = component.salesData[index];
+    expect(sale.transfer.length).toBe(1);
+    const addedTransfer = sale.transfer[0];
+    expect(addedTransfer.quantity).toBe(0);
+    expect(addedTransfer.method).toBe('');
+  });
+  
+  it('should add an installment to a sale', () => {
+    const index = 0;
+    component.addInstallment(index);
+    const sale = component.salesData[index];
+    expect(sale.installments.length).toBe(1);
+    const addedInstallment = sale.installments[0];
+    expect(addedInstallment.quantity).toBe(0);
+    expect(addedInstallment.method).toBe('');
+  });  
 });

@@ -87,8 +87,8 @@ describe('BookingsComponent', () => {
       price: 10,
       card: 5,
       cash: 5,
-      transfer: 0,
-      installments: 0,
+      transfer: [{ quantity: 0, method: 'Method 1' }],
+      installments: [{ quantity: 0, method: 'Method 2' }],
       date: new Date(),
       selected: true
     }];
@@ -112,8 +112,8 @@ describe('BookingsComponent', () => {
             price: 10,
             card: 5,
             cash: 5,
-            transfer: 0,
-            installments: 0,
+            transfer: [{ quantity: 0, method: 'Method 1' }],
+            installments: [{ quantity: 0, method: 'Method 2' }],
             date: new Date()
           }
         ]),
@@ -138,8 +138,8 @@ describe('BookingsComponent', () => {
             price: 10,
             card: 5,
             cash: 5,
-            transfer: 0,
-            installments: 0,
+            transfer: [{ quantity: 0, method: 'Method 1' }],
+            installments: [{ quantity: 0, method: 'Method 2' }],
             date: new Date()
           }
         ]),
@@ -161,8 +161,8 @@ describe('BookingsComponent', () => {
         price: 100,
         card: 50,
         cash: 50,
-        transfer: 0,
-        installments: 2,
+        transfer: [{ quantity: 0, method: 'Method 1' }],
+        installments: [{ quantity: 0, method: 'Method 2' }],
         date: new Date(),
         selected: false
       }

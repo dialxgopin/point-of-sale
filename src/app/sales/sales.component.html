@@ -35,12 +35,29 @@
                 i18n-placeholder="Cash payment">
         </td>
         <td>
-            <input name="transfer" currencyMask [(ngModel)]="sale.transfer" (ngModelChange)="saveRow(i)"
-                [readonly]="isReadOnly" i18n-placeholder="Transfer payment">
+            <tr *ngFor="let transfer of sale.transfer; let j = index">
+                <input name="transfer" currencyMask [(ngModel)]="transfer.quantity" (ngModelChange)="saveRow(i)"
+                    [readonly]="isReadOnly" i18n-placeholder="Transfer payment">
+                <select [(ngModel)]="transfer.method" (change)="saveRow(i)">
+                    <option *ngFor="let bank of banks" value="{{bank.name}}">{{bank.name}}</option>
+                </select>
+            </tr>
+            <div class="addLink">
+                <a href="#" (click)="addTransfer(i)" i18n>Add</a>
+            </div>
         </td>
         <td>
-            <input name="installments" currencyMask [(ngModel)]="sale.installments" (ngModelChange)="saveRow(i)"
-                [readonly]="isReadOnly" i18n-placeholder="In installments">
+            <tr *ngFor="let installment of sale.installments; let k = index">
+                <input name="installments" currencyMask [(ngModel)]="installment.quantity" (ngModelChange)="saveRow(i)"
+                    [readonly]="isReadOnly" i18n-placeholder="In installments">
+                <select [(ngModel)]="installment.method" (change)="saveRow(i)">
+                    <option *ngFor="let creditSystem of creditSystems" value="{{creditSystem.name}}">{{creditSystem.name}}
+                    </option>
+                </select>
+            </tr>
+            <div class="addLink">
+                <a href="#" (click)="addInstallment(i)" i18n>Add</a>
+            </div>
         </td>
     </tr>
 </app-data-table>

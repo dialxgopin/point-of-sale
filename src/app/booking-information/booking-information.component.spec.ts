@@ -89,8 +89,8 @@ describe('BookingInformationComponent', () => {
             price: 25,
             card: 0,
             cash: 0,
-            transfer: 0,
-            installments: 25,
+            transfer: [{ quantity: 0, method: 'Method 1' }],
+            installments: [{ quantity: 25, method: 'Method 2' }],
             date: new Date()
           }
         ]),

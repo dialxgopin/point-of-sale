@@ -9,10 +9,12 @@ export class FiltersService {
   private tableDateSubject = new BehaviorSubject<Date>(new Date());
   private rowCountSubgect = new BehaviorSubject<number>(0);
   private expenseTotalSubgect = new BehaviorSubject<number>(0);
+  private accountsSubgect = new BehaviorSubject<number>(0);
 
   tableDate$ = this.tableDateSubject.asObservable();
   rowCount$ = this.rowCountSubgect.asObservable();
   expenseTotal$ = this.expenseTotalSubgect.asObservable();
+  accounts$ = this.accountsSubgect.asObservable();
 
   setDate(date: Date) {
     this.tableDateSubject.next(date);
@@ -24,5 +26,9 @@ export class FiltersService {
 
   updateTotalExpense(price: number) {
     this.expenseTotalSubgect.next(price);
+  }
+
+  updateAccounts(accounts: number) {
+    this.accountsSubgect.next(accounts);
   }
 }

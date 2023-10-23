@@ -43,4 +43,12 @@ describe('FiltersService', () => {
       done();
     });
   });
+
+  it('should update the accounts subject with the given value', (done) => {
+    service.updateAccounts(42);
+    service.accounts$.subscribe((accountsValue) => {
+      expect(accountsValue).toBe(42);
+      done();
+    });    
+  });
 });

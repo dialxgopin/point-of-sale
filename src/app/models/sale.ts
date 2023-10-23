@@ -1,3 +1,5 @@
+import { Payment } from "./payment";
+
 export interface Sale {
     id: string;
     saleNumber: number;
@@ -7,7 +9,7 @@ export interface Sale {
     price: number;
     card: number;
     cash: number;
-    transfer: number;
-    installments: number;
+    transfer: Payment[];
+    installments: Payment[];
     date: Date;
 }
