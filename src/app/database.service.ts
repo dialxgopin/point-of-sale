@@ -21,7 +21,7 @@ export class DatabaseService extends Dexie {
 
     this.version(1).stores({
       sales: 'id,saleNumber,identifier,name,item,price,card,cash,transfer,installments,date',
-      bookings: 'id,saleNumber,identifier,name,quantity,date',
+      bookings: 'id,saleNumber,identifier,name,quantity,method,date',
       expenses: 'id,identifier,name,price,date',
       banks: 'id,name',
       creditSystems: 'id,name',

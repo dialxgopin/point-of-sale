@@ -4,5 +4,6 @@ export interface Booking {
     identifier: string;
     name: string;
     quantity: number;
+    method: string;
     date: Date;
 }

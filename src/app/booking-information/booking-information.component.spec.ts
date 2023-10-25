@@ -99,8 +99,8 @@ describe('BookingInformationComponent', () => {
     const spyBookingsWhere = spyOn(databaseServiceStub.bookings, 'where').and.returnValue({
       equals: () => ({
         toArray: () => Promise.resolve([
-          { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, date: new Date() },
-          { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 10, date: new Date() }
+          { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() },
+          { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() }
         ]),
       }),
     });

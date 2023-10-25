@@ -29,6 +29,8 @@ export class BookingsComponent {
 
   salesData: ClientSale[] = [];
 
+  paymentMethods: string[] = [];
+
   currentWorkingIndex: number = 0;
 
   tableDate: Date = new Date();
@@ -43,6 +45,12 @@ export class BookingsComponent {
         this.tableDate = date;
         this.updateReadOnlyStatus();
         this.salesData = [];
+        this.refreshBookingsDataFromDatabase();
+      }
+    );
+    this.filtersService.accounts$.subscribe(
+      async accounts => {
+        await this.getPaymentMethods();
         this.refreshBookingsDataFromDatabase();
       }
     );
@@ -97,6 +105,7 @@ export class BookingsComponent {
       identifier: '',
       name: '',
       quantity: 0,
+      method: 'Efectivo',
       date: this.tableDate
     };
     this.bookingData.push(newRow);
@@ -196,5 +205,13 @@ export class BookingsComponent {
     this.salesData.forEach(sale => (sale.selected = false));
     this.salesData[radioIndex].selected = true;
     this.saveRow(bookingIndex);
+  }
+
+  async getPaymentMethods() {
+    this.paymentMethods = [];
+    const banks = await this.databaseService.banks.toArray();
+    banks.forEach((bank) => {
+      this.paymentMethods.push(bank.name);
+    });
   }
 }

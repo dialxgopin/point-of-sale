@@ -3,6 +3,7 @@
         <th i18n>Identifier</th>
         <th i18n>Name</th>
         <th i18n>Quantity</th>
+        <th i18n>Payment method</th>
     </tr>
     <tr *ngFor="let booking of bookingData; let i = index" rows>
         <td>
@@ -16,6 +17,13 @@
         <td>
             <input name="quantity" currencyMask [(ngModel)]="booking.quantity" (ngModelChange)="saveRow(i)"
                 [readonly]="isReadOnly">
+        </td>
+        <td>
+            <select [(ngModel)]="booking.method" (change)="saveRow(i)">
+                <option value="Efectivo" i18n>Cash</option>
+                <option value="Tarjeta" i18n>Card</option>
+                <option *ngFor="let method of paymentMethods" value="{{method}}">{{method}}</option>
+            </select>
         </td>
     </tr>
 </app-data-table>

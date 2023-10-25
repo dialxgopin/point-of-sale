@@ -70,8 +70,8 @@ describe('BookingsComponent', () => {
 
   it('should calculate total', () => {
     component.bookingData = [
-      { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, date: new Date() },
-      { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 15, date: new Date() },
+      { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() },
+      { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 15, method: '', date: new Date() },
     ];
     component.calculateTotal();
     expect(component.bookingTotal.quantity).toBe(25);
@@ -106,7 +106,7 @@ describe('BookingsComponent', () => {
   }));
 
   it('should query client sales by identifier', fakeAsync(() => {
-    component.bookingData = [{ id: '1', saleNumber: 1, identifier: 'test', name: '', quantity: 0, date: new Date() }];
+    component.bookingData = [{ id: '1', saleNumber: 1, identifier: 'test', name: '', quantity: 0, method: '', date: new Date() }];
     const spySalesWhere = spyOn(databaseServiceStub.sales, 'where').and.returnValue({
       equals: () => ({
         toArray: () => Promise.resolve([
@@ -132,8 +132,8 @@ describe('BookingsComponent', () => {
       }),
       equals: () => ({
         toArray: () => Promise.resolve([
-          { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, date: new Date() },
-          { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 10, date: new Date() }
+          { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() },
+          { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() }
         ]),
       }),
     });
@@ -143,7 +143,7 @@ describe('BookingsComponent', () => {
   }));
 
   it('should query client sales by name', fakeAsync(() => {
-    component.bookingData = [{ id: '1', saleNumber: 1, identifier: '', name: 'test', quantity: 0, date: new Date() }];
+    component.bookingData = [{ id: '1', saleNumber: 1, identifier: '', name: 'test', quantity: 0, method: '', date: new Date() }];
     const spySalesWhere = spyOn(databaseServiceStub.sales, 'where').and.returnValue({
       equals: () => ({
         toArray: () => Promise.resolve([
@@ -169,8 +169,8 @@ describe('BookingsComponent', () => {
       }),
       equals: () => ({
         toArray: () => Promise.resolve([
-          { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, date: new Date() },
-          { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 10, date: new Date() }
+          { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() },
+          { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() }
         ]),
       }),
     });
@@ -203,6 +203,7 @@ describe('BookingsComponent', () => {
         identifier: 'string',
         name: 'string',
         quantity: 1,
+        method: '',
         date: new Date()
       }
     ];
