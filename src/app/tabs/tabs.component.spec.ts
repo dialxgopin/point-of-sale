@@ -11,6 +11,7 @@ import { BookingsComponent } from '../bookings/bookings.component';
 import { BookingInformationComponent } from '../booking-information/booking-information.component';
 import { ExpensesComponent } from '../expenses/expenses.component';
 import { AccountsComponent } from '../accounts/accounts.component';
+import { PaymentHistoryComponent } from '../payment-history/payment-history.component';
 
 describe('TabsComponent', () => {
   let component: TabsComponent;
@@ -26,7 +27,8 @@ describe('TabsComponent', () => {
         BookingsComponent,
         BookingInformationComponent,
         ExpensesComponent,
-        AccountsComponent
+        AccountsComponent,
+        PaymentHistoryComponent
       ],
       imports: [
         MatTabsModule,

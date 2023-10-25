@@ -1,0 +1,29 @@
+<app-data-table>
+    <tr headers>
+        <th><input name="searchIdentifier" type="text" [(ngModel)]="searchIdentifier"
+                (ngModelChange)="queryPaymentsByIdentifier()" placeholder="Identifier"
+                i18n-placeholder="Search by Identifier"></th>
+        <th><input name="searchName" type="text" [(ngModel)]="searchName" (ngModelChange)="queryPaymentsByName()"
+                placeholder="Name" i18n-placeholder="Search by Name"></th>
+        <th i18n>Date</th>
+        <th i18n>Quantity</th>
+        <th i18n>Payment Method</th>
+    </tr>
+    <tr *ngFor="let payment of paymentHistoryData" rows>
+        <td>{{ payment.identifier }}</td>
+        <td>{{ payment.name }}</td>
+        <td>{{ payment.date | date:'dd/MM/yyyy' }}</td>
+        <td>{{ payment.quantity | currency:'COP' }}</td>
+        <td>{{ payment.method }}</td>
+    </tr>
+</app-data-table>
+
+<strong i18n>Total:</strong>
+<app-data-table>
+    <tr headers>
+        <th i18n>Quantity</th>
+    </tr>
+    <tr rows>
+        <td>{{ quantityTotal | currency:'COP' }}</td>
+    </tr>
+</app-data-table>

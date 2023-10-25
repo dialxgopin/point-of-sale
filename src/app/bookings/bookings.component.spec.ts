@@ -6,6 +6,7 @@ import { DataTableComponent } from '../data-table/data-table.component';
 import { FormsModule } from '@angular/forms';
 import { Sale } from '../models/sale';
 import { Booking } from '../models/booking';
+import { Bank } from '../models/bank';
 
 describe('BookingsComponent', () => {
   let component: BookingsComponent;
@@ -30,6 +31,9 @@ describe('BookingsComponent', () => {
           toArray: () => Promise.resolve([] as Sale[]),
         }),
       }),
+    },
+    banks: {
+      toArray: () => Promise.resolve([] as Bank[]),
     },
   };
 
@@ -126,7 +130,7 @@ describe('BookingsComponent', () => {
         ]),
       }),
     });
-    const spyBookingsWhere = spyOn(databaseServiceStub.bookings, 'where').and.returnValue({
+    spyOn(databaseServiceStub.bookings, 'where').and.returnValue({
       between: () => ({
         toArray: () => Promise.resolve([]),
       }),
@@ -163,7 +167,7 @@ describe('BookingsComponent', () => {
         ]),
       }),
     });
-    const spyBookingsWhere = spyOn(databaseServiceStub.bookings, 'where').and.returnValue({
+    spyOn(databaseServiceStub.bookings, 'where').and.returnValue({
       between: () => ({
         toArray: () => Promise.resolve([]),
       }),
@@ -210,4 +214,15 @@ describe('BookingsComponent', () => {
     component.selectRow(0, 0);
     expect(component.salesData[0].selected).toBeTruthy();
   }));
+
+  it('should get payment methods from banks', async () => {
+    const bankData = [
+      { id: '1', name: 'Bank A' },
+      { id: '2', name: 'Bank B' },
+      { id: '3', name: 'Bank C' },
+    ];
+    spyOn(databaseServiceStub.banks, 'toArray').and.returnValue(Promise.resolve(bankData));
+    await component.getPaymentMethods();
+    expect(component.paymentMethods).toEqual(['Bank A', 'Bank B', 'Bank C']);
+  });
 });
