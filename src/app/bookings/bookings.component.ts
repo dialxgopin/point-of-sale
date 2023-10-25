@@ -12,6 +12,7 @@ interface BookingTotal {
 
 interface ClientSale extends Sale {
   selected?: boolean;
+  debt?: number;
 }
 
 @Component({
@@ -124,6 +125,7 @@ export class BookingsComponent {
         .where('identifier')
         .equals(this.bookingData[index].identifier)
         .toArray() as ClientSale[];
+      this.salesData = await this.calculateDebt(this.salesData);
       this.bookingData[index].name = this.salesData.length > 0 ? this.salesData[0].name : '';
       this.salesData[0].selected = this.salesData.length == 1;
       this.saveRow(index);
@@ -137,10 +139,57 @@ export class BookingsComponent {
         .where('name')
         .equals(this.bookingData[index].name)
         .toArray() as ClientSale[];
+      this.salesData = await this.calculateDebt(this.salesData);
       this.bookingData[index].identifier = this.salesData.length > 0 ? this.salesData[0].identifier : '';
       this.salesData[0].selected = this.salesData.length == 1;
       this.saveRow(index);
     }
+  }
+
+  private async calculateDebt(results: Sale[]): Promise<ClientSale[]> {
+    const bookingData: ClientSale[] = [];
+    for (const sale of results as Sale[]) {
+      const paymentSum: number = await this.sumSalePayments(sale.saleNumber);
+      const transfers: number = this.sumTransferQuantity(sale);
+      const paid: number = Number(
+        bigDecimal
+          .add(
+            +bigDecimal.add(sale.card, sale.cash),
+            +bigDecimal.add(paymentSum, transfers)
+          )
+      );
+      const due: number = Number(
+        bigDecimal.subtract(sale.price, paid)
+      );
+      if (due > 0) {
+        const bookingDetail: ClientSale = sale;
+        bookingDetail.debt = due;
+        bookingData.push(bookingDetail);
+      }
+    }
+    return bookingData;
+  }
+
+  private async sumSalePayments(saleNumber: number): Promise<number> {
+    const salePayments = await this.databaseService.bookings
+      .where('saleNumber')
+      .equals(saleNumber)
+      .toArray() as Booking[];
+    return salePayments.reduce((total, booking) => Number(
+      bigDecimal
+        .add(total, booking.quantity)
+    ), 0);
+  }
+
+  sumTransferQuantity(sale: Sale) {
+    const transfer = sale.transfer;
+    let sum: number = 0;
+    for (const element of transfer) {
+      sum = Number(
+        bigDecimal.add(sum, element.quantity)
+      );
+    }
+    return sum;
   }
 
   selectRow(bookingIndex: number, radioIndex: number) {

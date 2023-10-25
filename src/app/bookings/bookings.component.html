@@ -26,6 +26,7 @@
         <th i18n>Number</th>
         <th i18n>Item name</th>
         <th i18n>Date</th>
+        <th i18n>Due</th>
     </tr>
     <tr *ngFor="let sale of salesData; let j = index" rows>
         <td *ngIf="salesData.length > 1">
@@ -34,6 +35,7 @@
         <td><input name="number" type="number" [value]="sale.saleNumber" readonly></td>
         <td><input name="item" type="text" [value]="sale.item" readonly></td>
         <td><input name="date" type="text" [value]="sale.date | date:'dd/MM/yyyy'" readonly></td>
+        <td>{{ sale.debt | currency:'COP' }}</td>
     </tr>
 </app-data-table>
 

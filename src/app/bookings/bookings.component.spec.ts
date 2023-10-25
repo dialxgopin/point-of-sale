@@ -5,6 +5,7 @@ import { DatabaseService } from '../database.service';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { FormsModule } from '@angular/forms';
 import { Sale } from '../models/sale';
+import { Booking } from '../models/booking';
 
 describe('BookingsComponent', () => {
   let component: BookingsComponent;
@@ -16,6 +17,9 @@ describe('BookingsComponent', () => {
       where: () => ({
         between: () => ({
           toArray: () => Promise.resolve([]),
+        }),
+        equals: () => ({
+          toArray: () => Promise.resolve([] as Booking[]),
         }),
       }),
       put: () => Promise.resolve(),
@@ -53,6 +57,9 @@ describe('BookingsComponent', () => {
   it('should refresh bookings data', fakeAsync(() => {
     const spyBookingsWhere = spyOn(databaseServiceStub.bookings, 'where').and.returnValue({
       between: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+      equals: () => ({
         toArray: () => Promise.resolve([]),
       }),
     });
@@ -109,13 +116,24 @@ describe('BookingsComponent', () => {
             identifier: 'test',
             name: 'test',
             item: 'Item1',
-            price: 10,
+            price: 110,
             card: 5,
             cash: 5,
             transfer: [{ quantity: 0, method: 'Method 1' }],
-            installments: [{ quantity: 0, method: 'Method 2' }],
+            installments: [{ quantity: 100, method: 'Method 2' }],
             date: new Date()
           }
+        ]),
+      }),
+    });
+    const spyBookingsWhere = spyOn(databaseServiceStub.bookings, 'where').and.returnValue({
+      between: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+      equals: () => ({
+        toArray: () => Promise.resolve([
+          { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, date: new Date() },
+          { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 10, date: new Date() }
         ]),
       }),
     });
@@ -135,13 +153,24 @@ describe('BookingsComponent', () => {
             identifier: 'test',
             name: 'test',
             item: 'Item1',
-            price: 10,
+            price: 110,
             card: 5,
             cash: 5,
             transfer: [{ quantity: 0, method: 'Method 1' }],
-            installments: [{ quantity: 0, method: 'Method 2' }],
+            installments: [{ quantity: 100, method: 'Method 2' }],
             date: new Date()
           }
+        ]),
+      }),
+    });
+    const spyBookingsWhere = spyOn(databaseServiceStub.bookings, 'where').and.returnValue({
+      between: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+      equals: () => ({
+        toArray: () => Promise.resolve([
+          { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, date: new Date() },
+          { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 10, date: new Date() }
         ]),
       }),
     });

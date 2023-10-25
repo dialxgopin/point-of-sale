@@ -91,11 +91,12 @@ export class BookingInformationComponent {
     const bookingData: BookingDetails[] = [];
     for (const sale of results as Sale[]) {
       const paymentSum: number = await this.sumSalePayments(sale.saleNumber);
+      const transfers: number = this.sumTransferQuantity(sale);
       const paid: number = Number(
         bigDecimal
           .add(
             +bigDecimal.add(sale.card, sale.cash),
-            paymentSum
+            +bigDecimal.add(paymentSum, transfers)
           )
       );
       const due: number = Number(
@@ -126,6 +127,17 @@ export class BookingInformationComponent {
       bigDecimal
         .add(total, booking.quantity)
     ), 0);
+  }
+
+  sumTransferQuantity(sale: Sale) {
+    const transfer = sale.transfer;
+    let sum: number = 0;
+    for (const element of transfer) {
+      sum = Number(
+        bigDecimal.add(sum, element.quantity)
+      );
+    }
+    return sum;
   }
 
   async queryClientSalesByIdentifier() {
