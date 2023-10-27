@@ -74,10 +74,13 @@ describe('BookingsComponent', () => {
 
   it('should calculate total', () => {
     component.bookingData = [
-      { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() },
-      { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 15, method: '', date: new Date() },
+      { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: 'Efectivo', date: new Date() },
+      { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 15, method: 'Tarjeta', date: new Date() },
     ];
     component.calculateTotal();
+    expect(component.paymentMethodTotal.cash).toBe(10);
+    expect(component.paymentMethodTotal.card).toBe(15);
+    expect(component.paymentMethodTotal.transfer).toBe(0);
     expect(component.bookingTotal.quantity).toBe(25);
   });
 

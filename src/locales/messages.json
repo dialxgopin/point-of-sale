@@ -27,6 +27,7 @@
     "137047143224695767": "Transfer payment",
     "3766277152702435414": "In installments",
     "7349530031233006058": "Total:",
+    "5815412745800320040": "Payment Method",
     "8782485840208773265": "Customer name",
     "3249513483374643425": "Add",
     "6317231219751007459": "Expenses",
@@ -35,6 +36,7 @@
     "salesTabLabel": "Sales",
     "installmentsTabLabel": "In installments",
     "bookingsTabLabel": "Bookings",
+    "paymentHistoryTabLabel": "Payment History",
     "bookingInformationTabLabel": "Booking Information",
     "expensesTabLabel": "Expenses"
   }

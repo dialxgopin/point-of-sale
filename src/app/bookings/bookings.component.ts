@@ -5,6 +5,7 @@ import { Sale } from '../models/sale';
 import { Booking } from '../models/booking';
 import { DatabaseService } from '../database.service';
 import bigDecimal from 'js-big-decimal';
+import { PaymentTotal } from '../models/payment-total';
 
 interface BookingTotal {
   quantity: number;
@@ -30,6 +31,12 @@ export class BookingsComponent {
   salesData: ClientSale[] = [];
 
   paymentMethods: string[] = [];
+
+  paymentMethodTotal: PaymentTotal = {
+    card: 0,
+    cash: 0,
+    transfer: 0
+  };
 
   currentWorkingIndex: number = 0;
 
@@ -96,6 +103,38 @@ export class BookingsComponent {
         bigDecimal.add(this.bookingTotal.quantity, booking.quantity)
       );
     });
+    this.calculatePaymentMethodTotal();
+  }
+
+  calculatePaymentMethodTotal() {
+    this.paymentMethodTotal = {
+      card: 0,
+      cash: 0,
+      transfer: 0
+    };
+    this.bookingData.forEach((booking) => {
+      switch (booking.method) {
+        case 'Efectivo': {
+          this.paymentMethodTotal.cash = Number(
+            bigDecimal.add(booking.quantity, this.paymentMethodTotal.cash)
+          );
+          break;
+        }
+        case 'Tarjeta': {
+          this.paymentMethodTotal.card = Number(
+            bigDecimal.add(booking.quantity, this.paymentMethodTotal.card)
+          );
+          break;
+        }
+        default: {
+          this.paymentMethodTotal.transfer = Number(
+            bigDecimal.add(booking.quantity, this.paymentMethodTotal.transfer)
+          );
+          break;
+        }
+      }
+    });
+    this.filtersService.updateTotalPay(this.paymentMethodTotal);
   }
 
   addRow() {

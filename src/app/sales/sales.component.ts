@@ -6,6 +6,7 @@ import { DatabaseService } from '../database.service';
 import bigDecimal from 'js-big-decimal';
 import { Bank } from '../models/bank';
 import { CreditSystem } from '../models/credit-system';
+import { PaymentTotal } from '../models/payment-total';
 
 interface SaleTotal {
   price: number;
@@ -55,6 +56,11 @@ export class SalesComponent {
   tableDate: Date = new Date();
   rowCount: number = 0;
   isReadOnly: boolean = false;
+  paymentMethodTotal: PaymentTotal = {
+    card: 0,
+    cash: 0,
+    transfer: 0
+  };
 
   constructor(private databaseService: DatabaseService,
     private filtersService: FiltersService) {
@@ -81,6 +87,12 @@ export class SalesComponent {
         await this.getBanks();
         await this.getCreditSystems();
         this.refreshSalesDataFromDatabase();
+      }
+    );
+    this.filtersService.payTotal$.subscribe(
+      payments => {
+        this.paymentMethodTotal = payments;
+        this.calculateTotal();
       }
     );
   }
@@ -153,7 +165,6 @@ export class SalesComponent {
     this.saleTotal.cash = 0;
     this.saleTotal.transfer = 0;
     this.saleTotal.installments = 0;
-
     this.salesData.forEach((sale) => {
       this.saleTotal.price = Number(
         bigDecimal
@@ -194,12 +205,35 @@ export class SalesComponent {
         );
       });
     });
-
+    this.sumBookingPayments();
     this.saleTotal.balance = Number(
       bigDecimal.subtract(
         this.saleTotal.cash,
         this.saleTotal.expenses
       )
+    );
+  }
+
+  private sumBookingPayments() {
+    this.saleTotal.card = Number(
+      bigDecimal.add(
+        this.saleTotal.card,
+        this.paymentMethodTotal.card
+      )
+    );
+    this.saleTotal.cash = Number(
+      bigDecimal
+        .add(
+          this.saleTotal.cash,
+          this.paymentMethodTotal.cash
+        )
+    );
+    this.saleTotal.transfer = Number(
+      bigDecimal
+        .add(
+          this.saleTotal.transfer,
+          this.paymentMethodTotal.transfer
+        )
     );
   }
 

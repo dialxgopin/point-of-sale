@@ -15,6 +15,11 @@ describe('SalesComponent', () => {
     tableDate$: new BehaviorSubject<Date>(new Date()),
     expenseTotal$: of(9),
     accounts$: of(0),
+    payTotal$: of({
+      card: 0,
+      cash: 0,
+      transfer: 0
+    }),
     changeRowCount: () => { },
   };
 
@@ -156,7 +161,7 @@ describe('SalesComponent', () => {
     expect(addedTransfer.quantity).toBe(0);
     expect(addedTransfer.method).toBe('');
   });
-  
+
   it('should add an installment to a sale', () => {
     const index = 0;
     component.addInstallment(index);
@@ -165,5 +170,5 @@ describe('SalesComponent', () => {
     const addedInstallment = sale.installments[0];
     expect(addedInstallment.quantity).toBe(0);
     expect(addedInstallment.method).toBe('');
-  });  
+  });
 });
