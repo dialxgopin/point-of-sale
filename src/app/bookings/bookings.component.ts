@@ -210,7 +210,7 @@ export class BookingsComponent {
         bigDecimal.subtract(sale.price, paid)
       );
       if (due > 0) {
-        const bookingDetail: ClientSale = sale;
+        let bookingDetail: ClientSale = sale;
         bookingDetail.debt = due;
         bookingData.push(bookingDetail);
       }

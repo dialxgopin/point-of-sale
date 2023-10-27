@@ -13,8 +13,8 @@ interface BookingDetails {
   name: string;
   item: string;
   price: number;
-  paid: number;
-  due: number;
+  paid?: number;
+  due?: number;
   date: Date;
 }
 
@@ -41,20 +41,10 @@ export class BookingInformationComponent {
   searchIdentifier: string = '';
   searchName: string = '';
 
-  tableDate: Date = new Date();
-
   constructor(private databaseService: DatabaseService,
     private filtersService: FiltersService) { }
 
   ngOnInit() {
-    this.filtersService.tableDate$.subscribe(
-      date => {
-        this.tableDate = date;
-        this.searchIdentifier = '';
-        this.searchName = '';
-        this.querySales();
-      }
-    );
     this.filtersService.rowCount$.subscribe(
       rows => {
         this.searchIdentifier = '';
@@ -65,29 +55,11 @@ export class BookingInformationComponent {
   }
 
   async querySales() {
-    const [startDate, endDate] = this.dateOneDayRange();
-    const salesData = await this.databaseService.sales
-      .where('date')
-      .between(startDate, endDate, true, true)
-      .toArray() as Sale[];
-    this.bookingData = await this.formatResults(salesData);
+    const salesData = await this.databaseService.sales.toArray() as Sale[];
+    this.bookingData = await this.calculateOutstandingBalances(salesData);
   }
 
-  private dateOneDayRange() {
-    const startDate = new Date(
-      this.tableDate.getFullYear(),
-      this.tableDate.getMonth(),
-      this.tableDate.getDate()
-    );
-    const endDate = new Date(
-      this.tableDate.getFullYear(),
-      this.tableDate.getMonth(),
-      this.tableDate.getDate() + 1
-    );
-    return [startDate, endDate];
-  }
-
-  private async formatResults(results: Sale[]): Promise<BookingDetails[]> {
+  private async calculateOutstandingBalances(results: Sale[]): Promise<BookingDetails[]> {
     const bookingData: BookingDetails[] = [];
     for (const sale of results as Sale[]) {
       const paymentSum: number = await this.sumSalePayments(sale.saleNumber);
@@ -102,18 +74,12 @@ export class BookingInformationComponent {
       const due: number = Number(
         bigDecimal.subtract(sale.price, paid)
       );
-      const bookingDetail: BookingDetails = {
-        id: uuidv4(),
-        saleNumber: sale.saleNumber,
-        identifier: sale.identifier,
-        name: sale.name,
-        item: sale.item,
-        price: sale.price,
-        paid: paid,
-        due: due,
-        date: sale.date,
-      };
-      bookingData.push(bookingDetail);
+      if (due > 0) {
+        let bookingDetail: BookingDetails = sale;
+        bookingDetail.paid = paid;
+        bookingDetail.due = due;
+        bookingData.push(bookingDetail);
+      }
     }
     return bookingData;
   }
@@ -143,7 +109,7 @@ export class BookingInformationComponent {
   async queryClientSalesByIdentifier() {
     this.searchName = '';
     if (this.searchIdentifier.length > 0) {
-      this.bookingData = await this.formatResults(
+      this.bookingData = await this.calculateOutstandingBalances(
         await this.databaseService.sales
           .where('identifier')
           .equals(this.searchIdentifier)
@@ -157,7 +123,7 @@ export class BookingInformationComponent {
   async queryClientSalesByName() {
     this.searchIdentifier = '';
     if (this.searchName.length > 0) {
-      this.bookingData = await this.formatResults(
+      this.bookingData = await this.calculateOutstandingBalances(
         await this.databaseService.sales
           .where('name')
           .equals(this.searchName)

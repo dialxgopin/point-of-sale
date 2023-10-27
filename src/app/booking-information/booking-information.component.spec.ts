@@ -13,7 +13,6 @@ describe('BookingInformationComponent', () => {
   let fixture: ComponentFixture<BookingInformationComponent>;
 
   const filtersServiceStub = {
-    tableDate$: new BehaviorSubject<Date>(new Date()),
     rowCount$: new BehaviorSubject<number>(0),
   };
 
@@ -27,6 +26,7 @@ describe('BookingInformationComponent', () => {
           toArray: () => Promise.resolve([] as Sale[]),
         }),
       }),
+      toArray: () => Promise.resolve([] as Sale[]),
     },
     bookings: {
       where: () => ({
@@ -59,17 +59,11 @@ describe('BookingInformationComponent', () => {
   });
 
   it('should refresh booking data', fakeAsync(() => {
-    const spySalesWhere = spyOn(databaseServiceStub.sales, 'where').and.returnValue({
-      between: () => ({
-        toArray: () => Promise.resolve([]),
-      }),
-      equals: () => ({
-        toArray: () => Promise.resolve([]),
-      }),
-    });
+    const spySales = spyOn(databaseServiceStub.sales, 'toArray')
+      .and.returnValue(Promise.resolve([]));
     component.querySales();
     tick();
-    expect(spySalesWhere).toHaveBeenCalled();
+    expect(spySales).toHaveBeenCalled();
   }));
 
   it('should query client sales by identifier', fakeAsync(() => {
@@ -114,17 +108,11 @@ describe('BookingInformationComponent', () => {
 
   it('should query sales when searchIdentifier is empty', fakeAsync(() => {
     component.searchIdentifier = '';
-    const spySalesWhere = spyOn(databaseServiceStub.sales, 'where').and.returnValue({
-      between: () => ({
-        toArray: () => Promise.resolve([]),
-      }),
-      equals: () => ({
-        toArray: () => Promise.resolve([]),
-      }),
-    });
+    const spySales = spyOn(databaseServiceStub.sales, 'toArray')
+      .and.returnValue(Promise.resolve([]));
     component.queryClientSalesByIdentifier();
     tick();
-    expect(spySalesWhere).toHaveBeenCalled();
+    expect(spySales).toHaveBeenCalled();
   }));
 
   it('should query client sales by name', fakeAsync(() => {
@@ -144,16 +132,10 @@ describe('BookingInformationComponent', () => {
 
   it('should query sales when searchName is empty', fakeAsync(() => {
     component.searchName = '';
-    const spySalesWhere = spyOn(databaseServiceStub.sales, 'where').and.returnValue({
-      between: () => ({
-        toArray: () => Promise.resolve([]),
-      }),
-      equals: () => ({
-        toArray: () => Promise.resolve([]),
-      }),
-    });
+    const spySales = spyOn(databaseServiceStub.sales, 'toArray')
+      .and.returnValue(Promise.resolve([]));
     component.queryClientSalesByName();
     tick();
-    expect(spySalesWhere).toHaveBeenCalled();
+    expect(spySales).toHaveBeenCalled();
   }));
 });
