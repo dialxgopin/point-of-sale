@@ -4,10 +4,15 @@ import { DatabaseService } from '../database.service';
 import { FiltersService } from '../filters.service';
 import { Booking } from '../models/booking';
 import { DataTableComponent } from '../data-table/data-table.component';
+import { BehaviorSubject } from 'rxjs';
 
 describe('PaymentHistoryComponent', () => {
   let component: PaymentHistoryComponent;
   let fixture: ComponentFixture<PaymentHistoryComponent>;
+
+  const filtersServiceStub = {
+    rowCount$: new BehaviorSubject<number>(0),
+  };
 
   const databaseServiceStub = {
     bookings: {
@@ -25,7 +30,7 @@ describe('PaymentHistoryComponent', () => {
       declarations: [PaymentHistoryComponent, DataTableComponent],
       providers: [
         { provide: DatabaseService, useValue: databaseServiceStub },
-        FiltersService,
+        { provide: FiltersService, useValue: filtersServiceStub },
       ],
     });
     fixture = TestBed.createComponent(PaymentHistoryComponent);
@@ -34,6 +39,15 @@ describe('PaymentHistoryComponent', () => {
 
   it('should create the component', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should call refreshBookingsDataFromDatabase on rowCount$ change', () => {
+    filtersServiceStub.rowCount$.next(5);
+    const refreshSpy = spyOn(component, 'refreshBookingsDataFromDatabase');
+    component.ngOnInit();
+    filtersServiceStub.rowCount$.subscribe(() => {
+      expect(refreshSpy).toHaveBeenCalled();
+    });
   });
 
   it('should calculate total quantity', () => {

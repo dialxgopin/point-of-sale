@@ -51,4 +51,12 @@ describe('FiltersService', () => {
       done();
     });    
   });
+
+  it('should update expense and emit total', (done) => {
+    service.updateTotalExpense(100.1);
+    service.expenseTotal$.subscribe((expense) => {
+      expect(expense).toBe(100.1);
+      done();
+    });
+  });
 });

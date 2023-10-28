@@ -14,6 +14,8 @@ import { BookingInformationComponent } from './booking-information/booking-infor
 import { ExpensesComponent } from './expenses/expenses.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { PaymentHistoryComponent } from './payment-history/payment-history.component';
+import { ReportsComponent } from './reports/reports.component';
+import { DateRange } from './models/date-range';
 
 describe('AppComponent', () => {
   let filtersService: FiltersService;
@@ -35,7 +37,8 @@ describe('AppComponent', () => {
       BookingInformationComponent,
       ExpensesComponent,
       AccountsComponent,
-      PaymentHistoryComponent
+      PaymentHistoryComponent,
+      ReportsComponent
     ],
     providers: [FiltersService]
   }));
@@ -54,5 +57,29 @@ describe('AppComponent', () => {
     const setDateSpy = spyOn(filtersService, 'setDate');
     app.handleDateSelected(selectedDate);
     expect(setDateSpy).toHaveBeenCalledWith(selectedDate);
+  });
+
+  it('should handle date range selected', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    filtersService = TestBed.inject(FiltersService);
+    const selectedDateRange: DateRange = {
+      startDate: new Date(2023, 0, 1),
+      endDate: new Date(2023, 0, 2),
+    };
+    const setDateRangeSpy = spyOn(filtersService, 'setDateRange');
+    const setDateSpy = spyOn(filtersService, 'setDate');
+    app.handleDateRangeSelected(selectedDateRange);
+    expect(setDateRangeSpy).toHaveBeenCalledWith(selectedDateRange);
+    expect(setDateSpy).toHaveBeenCalledWith(selectedDateRange.startDate);
+  });
+
+  it('should handle tab selected', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    filtersService = TestBed.inject(FiltersService);
+    const selectedTab = 6;
+    app.handleTabSelected(selectedTab);
+    expect(app.reportsTabSelected).toBeTrue();
   });
 });

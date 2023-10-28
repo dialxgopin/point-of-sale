@@ -1,0 +1,8 @@
+.dateSelectorContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.rangeText {
+    padding-top: 1rem;
+}

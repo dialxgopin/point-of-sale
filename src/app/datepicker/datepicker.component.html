@@ -1,4 +1,15 @@
-<input matInput (dateChange)="onDateChange($event)" [matDatepicker]="picker"
-    placeholder="{{defaultDate | date:'dd/MM/yyyy'}}" readonly>
-<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-<mat-datepicker #picker></mat-datepicker>
+<div *ngIf="!showRangeAndHideSingleDatePicker">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <input matInput (dateChange)="onDateChange($event)" [matDatepicker]="picker"
+        placeholder="{{defaultDate | date:'dd/MM/yyyy'}}" readonly>
+    <mat-datepicker #picker></mat-datepicker>
+</div>
+
+<div *ngIf="showRangeAndHideSingleDatePicker" class="dateSelectorContainer">
+    <mat-datepicker-toggle matSuffix [for]="rangePicker"></mat-datepicker-toggle>
+    <mat-date-range-input [rangePicker]="rangePicker" class="rangeText">
+        <input matStartDate (dateChange)="onStartDateChange($event)" placeholder="{{defaultDate | date:'dd/MM/yyyy'}}">
+        <input matEndDate (dateChange)="onEndDateChange($event)" placeholder="{{defaultDate | date:'dd/MM/yyyy'}}">
+    </mat-date-range-input>
+    <mat-date-range-picker #rangePicker></mat-date-range-picker>
+</div>

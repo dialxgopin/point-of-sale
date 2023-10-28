@@ -1,0 +1,20 @@
+<app-data-table>
+    <tr headers>
+        <th i18n>Item price</th>
+        <th i18n>Card payment</th>
+        <th i18n>Cash payment</th>
+        <th i18n>Transfer payment</th>
+        <th i18n>In installments</th>
+        <th i18n>Expenses</th>
+        <th i18n>Balance</th>
+    </tr>
+    <tr rows>
+        <td>{{ total.price | currency:'COP' }}</td>
+        <td>{{ total.card | currency:'COP' }}</td>
+        <td>{{ total.cash | currency:'COP' }}</td>
+        <td>{{ total.transfer | currency:'COP' }}</td>
+        <td>{{ total.installments | currency:'COP' }}</td>
+        <td>{{ total.expenses | currency:'COP' }}</td>
+        <td>{{ total.balance | currency:'COP' }}</td>
+    </tr>
+</app-data-table>

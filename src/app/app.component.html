@@ -1,2 +1,3 @@
-<app-datepicker (dateSelected)="handleDateSelected($event)"></app-datepicker>
-<app-tabs />
+<app-datepicker (dateSelected)="handleDateSelected($event)" (dateRangeSelected)="handleDateRangeSelected($event)"
+    [showRangeAndHideSingleDatePicker]="reportsTabSelected"></app-datepicker>
+<app-tabs (selectedTab)="handleTabSelected($event)" />
