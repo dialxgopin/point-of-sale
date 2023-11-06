@@ -1,3 +1,8 @@
 .addLink {
     text-align: right;
 }
+
+.addLink>button {
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+}
