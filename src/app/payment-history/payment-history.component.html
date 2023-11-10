@@ -21,9 +21,9 @@
         <td><button (click)="queryInitialPayment(i)" i18n>Show initial</button></td>
     </tr>
 </app-data-table>
-<div>
+<div *ngIf="salesData.length > 0">
     <strong i18n>Initial payment:</strong>
-    <app-data-table *ngIf="salesData.length > 0">
+    <app-data-table>
         <tr headers>
             <th i18n>Number</th>
             <th i18n>Item price</th>
