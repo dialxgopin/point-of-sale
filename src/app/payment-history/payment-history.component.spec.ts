@@ -5,6 +5,7 @@ import { FiltersService } from '../filters.service';
 import { Booking } from '../models/booking';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { BehaviorSubject } from 'rxjs';
+import { Sale } from '../models/sale';
 
 describe('PaymentHistoryComponent', () => {
   let component: PaymentHistoryComponent;
@@ -22,6 +23,13 @@ describe('PaymentHistoryComponent', () => {
         }),
       }),
       toArray: () => Promise.resolve([] as Booking[]),
+    },
+    sales: {
+      where: () => ({
+        equals: () => ({
+          toArray: () => Promise.resolve([] as Sale[]),
+        }),
+      }),
     },
   };
 
@@ -139,5 +147,58 @@ describe('PaymentHistoryComponent', () => {
     component.queryPaymentsByName();
     tick();
     expect(spyBookingsToArray).toHaveBeenCalled();
+  }));
+
+  it('should set salesData and calculate total by sale when calling queryInitialPayment', fakeAsync(() => {
+    spyOn(databaseServiceStub.sales, 'where').and.returnValue({
+      equals: () => ({
+        toArray: () => Promise.resolve([
+          {
+            id: '1',
+            saleNumber: 1,
+            identifier: 'test',
+            name: 'test',
+            item: 'Item1',
+            price: 1000,
+            card: 25,
+            cash: 25,
+            transfer: [{ quantity: 25, method: 'Method 1' }],
+            installments: [{ quantity: 25, method: 'Method 2' }],
+            date: new Date()
+          }
+        ]),
+      }),
+    });
+    const bookingData: Booking[] = [
+      {
+        id: '',
+        saleNumber: 1,
+        identifier: '1',
+        name: 'John',
+        quantity: 100,
+        method: '',
+        date: new Date(),
+      },
+    ];
+    spyOn(databaseServiceStub.bookings, 'where').and.returnValue({
+      equals: () => ({
+        toArray: () => Promise.resolve(bookingData),
+      }),
+    });
+    component.paymentHistoryData = [
+      {
+        id: '',
+        saleNumber: 1,
+        identifier: '1',
+        name: 'Bob',
+        quantity: 0,
+        method: '',
+        date: new Date(),
+      }
+    ];
+    component.queryInitialPayment(0);
+    tick();
+    expect(component.salesData.length).toBe(1);
+    expect(component.quantityTotal).toBe(200);
   }));
 });

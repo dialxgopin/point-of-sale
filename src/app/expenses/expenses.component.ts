@@ -61,6 +61,7 @@ export class ExpensesComponent {
   saveRow(index: number) {
     if (this.expenseData[index].identifier) {
       this.databaseService.expenses.put(this.expenseData[index]);
+      this.filtersService.changeRowCount(Math.random());
     }
     this.calculateTotal();
   }

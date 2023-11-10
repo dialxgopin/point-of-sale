@@ -17,6 +17,10 @@ interface Total {
   balance: number;
 }
 
+interface DailyTotal extends Total {
+  date?: Date;
+}
+
 @Component({
   selector: 'app-reports',
   templateUrl: './reports.component.html',
@@ -33,6 +37,8 @@ export class ReportsComponent {
     balance: 0
   };
 
+  dailyTotal: DailyTotal[] = [];
+
   salesData: Sale[] = [];
   bookingData: Booking[] = [];
   expenseData: Expense[] = [];
@@ -47,6 +53,21 @@ export class ReportsComponent {
     this.filtersService.dateRange$.subscribe(
       dates => {
         this.dateRange = dates;
+        this.dateRange.startDate = new Date(
+          this.dateRange.startDate.getFullYear(),
+          this.dateRange.startDate.getMonth(),
+          this.dateRange.startDate.getDate()
+        );
+        this.dateRange.endDate = new Date(
+          this.dateRange.endDate.getFullYear(),
+          this.dateRange.endDate.getMonth(),
+          this.dateRange.endDate.getDate() + 1
+        );
+        this.refreshDataFromDatabase();
+      }
+    );
+    this.filtersService.rowCount$.subscribe(
+      rows => {
         this.dateRange.startDate = new Date(
           this.dateRange.startDate.getFullYear(),
           this.dateRange.startDate.getMonth(),
@@ -76,108 +97,159 @@ export class ReportsComponent {
       .between(this.dateRange.startDate, this.dateRange.endDate, true, true)
       .toArray();
     this.calculateTotal();
+    this.calculateDailyTotal();
   }
 
   calculateTotal() {
-    this.resetZeros();
-    this.sumSales();
-    this.sumPayments();
-    this.sumExpenses();
-    this.calculateBalance();
+    this.total = this.resetZeros(this.total);
+    this.total = this.sumSales(this.total, this.salesData);
+    this.total = this.sumPayments(this.total, this.bookingData);
+    this.total = this.sumExpenses(this.total, this.expenseData);
+    this.total = this.calculateBalance(this.total);
   }
 
-  private resetZeros() {
-    this.total.price = 0;
-    this.total.card = 0;
-    this.total.cash = 0;
-    this.total.transfer = 0;
-    this.total.installments = 0;
-    this.total.expenses = 0;
+  calculateDailyTotal() {
+    this.dailyTotal = [];
+    let currentDate = new Date(this.dateRange.startDate);
+    const endDate = new Date(this.dateRange.endDate);
+    while (currentDate < endDate) {
+      let dailyTotal: DailyTotal = {
+        price: 0,
+        card: 0,
+        cash: 0,
+        transfer: 0,
+        installments: 0,
+        expenses: 0,
+        balance: 0,
+        date: currentDate
+      };
+      const salesForDay = this.salesData.filter(sale =>
+        sale.date >= currentDate && sale.date < new Date(currentDate.getTime() + 24 * 60 * 60 * 1000)
+      );
+      const bookingsForDay = this.bookingData.filter(booking =>
+        booking.date >= currentDate && booking.date < new Date(currentDate.getTime() + 24 * 60 * 60 * 1000)
+      );
+      const expensesForDay = this.expenseData.filter(expense =>
+        expense.date >= currentDate && expense.date < new Date(currentDate.getTime() + 24 * 60 * 60 * 1000)
+      );
+      dailyTotal = this.sumSales(dailyTotal, salesForDay);
+      dailyTotal = this.sumPayments(dailyTotal, bookingsForDay);
+      dailyTotal = this.sumExpenses(dailyTotal, expensesForDay);
+      dailyTotal = this.calculateBalance(dailyTotal);
+      if (!this.areAllNumbersEqualToZero(dailyTotal)) {
+        this.dailyTotal.push(dailyTotal);
+      }
+      currentDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
+    }
   }
 
-  private sumSales() {
-    this.salesData.forEach((sale) => {
-      this.total.price = Number(
+  private resetZeros(total: Total): Total {
+    total.price = 0;
+    total.card = 0;
+    total.cash = 0;
+    total.transfer = 0;
+    total.installments = 0;
+    total.expenses = 0;
+    return total;
+  }
+
+  private sumSales(total: Total, sales: Sale[]): Total {
+    sales.forEach((sale) => {
+      total.price = Number(
         bigDecimal
           .add(
-            this.total.price,
+            total.price,
             sale.price
           )
       );
-      this.total.card = Number(
+      total.card = Number(
         bigDecimal.add(
-          this.total.card,
+          total.card,
           sale.card
         )
       );
-      this.total.cash = Number(
+      total.cash = Number(
         bigDecimal
           .add(
-            this.total.cash,
+            total.cash,
             sale.cash
           )
       );
       sale.transfer.forEach((transfer) => {
-        this.total.transfer = Number(
+        total.transfer = Number(
           bigDecimal
             .add(
-              this.total.transfer,
+              total.transfer,
               transfer.quantity
             )
         );
       });
       sale.installments.forEach((installment) => {
-        this.total.installments = Number(
+        total.installments = Number(
           bigDecimal
             .add(
-              this.total.installments,
+              total.installments,
               installment.quantity
             )
         );
       });
     });
+    return total;
   }
 
-  private sumPayments() {
-    this.bookingData.forEach((booking) => {
+  private sumPayments(total: Total, bookings: Booking[]): Total {
+    bookings.forEach((booking) => {
       switch (booking.method) {
         case 'Efectivo': {
-          this.total.cash = Number(
-            bigDecimal.add(booking.quantity, this.total.cash)
+          total.cash = Number(
+            bigDecimal.add(booking.quantity, total.cash)
           );
           break;
         }
         case 'Tarjeta': {
-          this.total.card = Number(
-            bigDecimal.add(booking.quantity, this.total.card)
+          total.card = Number(
+            bigDecimal.add(booking.quantity, total.card)
           );
           break;
         }
         default: {
-          this.total.transfer = Number(
-            bigDecimal.add(booking.quantity, this.total.transfer)
+          total.transfer = Number(
+            bigDecimal.add(booking.quantity, total.transfer)
           );
           break;
         }
       }
     });
+    return total;
   }
 
-  private sumExpenses() {
-    this.expenseData.forEach((expense) => {
-      this.total.expenses = Number(
+  private sumExpenses(total: Total, expenses: Expense[]): Total {
+    expenses.forEach((expense) => {
+      total.expenses = Number(
         bigDecimal
-          .add(this.total.expenses, expense.price)
+          .add(total.expenses, expense.price)
       );
     });
+    return total;
   }
 
-  private calculateBalance() {
-    this.total.balance = Number(
+  private calculateBalance(total: Total): Total {
+    total.balance = Number(
       bigDecimal.subtract(
-        this.total.cash,
-        this.total.expenses
+        total.cash,
+        total.expenses
       )
     );
+    return total;
+  }
+
+  areAllNumbersEqualToZero(obj: DailyTotal): boolean {
+    for (const key in obj) {
+      if (typeof obj[key as keyof DailyTotal] === 'number' &&
+        obj[key as keyof DailyTotal] !== 0) {
+        return false;
+      }
+    }
+    return true;
   }
 }

@@ -64,11 +64,18 @@ export class BookingInformationComponent {
     for (const sale of results as Sale[]) {
       const paymentSum: number = await this.sumSalePayments(sale.saleNumber);
       const transfers: number = this.sumTransferQuantity(sale);
-      const paid: number = Number(
+      let paid: number = Number(
         bigDecimal
           .add(
             +bigDecimal.add(sale.card, sale.cash),
             +bigDecimal.add(paymentSum, transfers)
+          )
+      );
+      paid = Number(
+        bigDecimal
+          .add(
+            paid,
+            this.sumInstallmentsQuantity(sale)
           )
       );
       const due: number = Number(
@@ -99,6 +106,17 @@ export class BookingInformationComponent {
     const transfer = sale.transfer;
     let sum: number = 0;
     for (const element of transfer) {
+      sum = Number(
+        bigDecimal.add(sum, element.quantity)
+      );
+    }
+    return sum;
+  }
+
+  sumInstallmentsQuantity(sale: Sale) {
+    const installments = sale.installments;
+    let sum: number = 0;
+    for (const element of installments) {
       sum = Number(
         bigDecimal.add(sum, element.quantity)
       );

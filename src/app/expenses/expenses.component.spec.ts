@@ -13,6 +13,7 @@ describe('ExpensesComponent', () => {
   const filtersServiceStub = {
     tableDate$: new BehaviorSubject<Date>(new Date()),
     updateTotalExpense: () => { },
+    changeRowCount: () => { },
   };
 
   const databaseServiceStub = {

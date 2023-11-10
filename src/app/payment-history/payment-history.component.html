@@ -1,5 +1,6 @@
 <app-data-table>
     <tr headers>
+        <th i18n>Number</th>
         <th><input name="searchIdentifier" type="text" [(ngModel)]="searchIdentifier"
                 (ngModelChange)="queryPaymentsByIdentifier()" placeholder="Identifier"
                 i18n-placeholder="Search by Identifier"></th>
@@ -8,16 +9,41 @@
         <th i18n>Date</th>
         <th i18n>Quantity</th>
         <th i18n>Payment Method</th>
+        <th i18n>Action</th>
     </tr>
-    <tr *ngFor="let payment of paymentHistoryData" rows>
+    <tr *ngFor="let payment of paymentHistoryData; let i = index" rows>
+        <td><input name="number" type="number" [value]="payment.saleNumber" readonly></td>
         <td>{{ payment.identifier }}</td>
         <td>{{ payment.name }}</td>
         <td>{{ payment.date | date:'dd/MM/yyyy' }}</td>
         <td>{{ payment.quantity | currency:'COP' }}</td>
         <td>{{ payment.method }}</td>
+        <td><button (click)="queryInitialPayment(i)" i18n>Show initial</button></td>
     </tr>
 </app-data-table>
-
+<div>
+    <strong i18n>Initial payment:</strong>
+    <app-data-table *ngIf="salesData.length > 0">
+        <tr headers>
+            <th i18n>Number</th>
+            <th i18n>Item price</th>
+            <th i18n>Card payment</th>
+            <th i18n>Cash payment</th>
+            <th i18n>Transfer payment</th>
+            <th i18n>In installments</th>
+            <th i18n>Date</th>
+        </tr>
+        <tr *ngFor="let sale of salesData" rows>
+            <td>{{ sale.saleNumber }}</td>
+            <td>{{ sale.price | currency:'COP' }}</td>
+            <td>{{ sale.card | currency:'COP' }}</td>
+            <td>{{ sale.cash| currency:'COP' }}</td>
+            <td>{{ sumPayments(sale.transfer) | currency:'COP' }}</td>
+            <td>{{ sumPayments(sale.installments) | currency:'COP' }}</td>
+            <td><input name="date" type="text" [value]="sale.date | date:'dd/MM/yyyy'" readonly></td>
+        </tr>
+    </app-data-table>
+</div>
 <strong i18n>Total:</strong>
 <app-data-table>
     <tr headers>

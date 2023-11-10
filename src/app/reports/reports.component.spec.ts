@@ -21,7 +21,7 @@ const sales: Sale[] = [
     cash: 40,
     transfer: [{ quantity: 0.5, method: 'Method 1' }],
     installments: [{ quantity: 0.1, method: 'Method 2' }],
-    date: new Date()
+    date: new Date(2023, 0, 2)
   },
   {
     id: '2',
@@ -34,7 +34,20 @@ const sales: Sale[] = [
     cash: 80,
     transfer: [{ quantity: 0.5, method: 'Method 1' }],
     installments: [{ quantity: 0.2, method: 'Method 2' }],
-    date: new Date()
+    date: new Date(2023, 0, 3)
+  },
+  {
+    id: '3',
+    saleNumber: 3,
+    identifier: 'test',
+    name: 'test',
+    item: 'Item2',
+    price: 0,
+    card: 0,
+    cash: 0,
+    transfer: [{ quantity: 0, method: 'Method 1' }],
+    installments: [{ quantity: 0, method: 'Method 2' }],
+    date: new Date(2023, 0, 4)
   }
 ];
 
@@ -58,6 +71,7 @@ describe('ReportsComponent', () => {
       startDate: new Date(),
       endDate: new Date()
     }),
+    rowCount$: new BehaviorSubject<number>(0),
   };
 
   const databaseServiceStub = {

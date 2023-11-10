@@ -1,3 +1,27 @@
+<strong i18n>Daily total:</strong>
+<app-data-table>
+    <tr headers>
+        <th i18n>Item price</th>
+        <th i18n>Card payment</th>
+        <th i18n>Cash payment</th>
+        <th i18n>Transfer payment</th>
+        <th i18n>In installments</th>
+        <th i18n>Expenses</th>
+        <th i18n>Balance</th>
+        <th i18n>Date</th>
+    </tr>
+    <tr *ngFor="let dailyTotalItem of dailyTotal" rows>
+        <td>{{ dailyTotalItem.price | currency:'COP' }}</td>
+        <td>{{ dailyTotalItem.card | currency:'COP' }}</td>
+        <td>{{ dailyTotalItem.cash | currency:'COP' }}</td>
+        <td>{{ dailyTotalItem.transfer | currency:'COP' }}</td>
+        <td>{{ dailyTotalItem.installments | currency:'COP' }}</td>
+        <td>{{ dailyTotalItem.expenses | currency:'COP' }}</td>
+        <td>{{ dailyTotalItem.balance | currency:'COP' }}</td>
+        <td>{{ dailyTotalItem.date| date:'dd/MM/yyyy' }}</td>
+    </tr>
+</app-data-table>
+<strong i18n>Total:</strong>
 <app-data-table>
     <tr headers>
         <th i18n>Item price</th>

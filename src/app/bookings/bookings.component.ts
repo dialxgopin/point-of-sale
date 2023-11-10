@@ -42,6 +42,10 @@ export class BookingsComponent {
 
   tableDate: Date = new Date();
   isReadOnly: boolean = false;
+  isEditing: boolean = false;
+  paymentLessThanDebt: boolean = true;
+
+  newPaymentIdentifier: string = '';
 
   constructor(private databaseService: DatabaseService,
     private filtersService: FiltersService) { }
@@ -88,7 +92,6 @@ export class BookingsComponent {
       this.tableDate.getMonth(),
       this.tableDate.getDate() + 1
     );
-
     this.bookingData = await this.databaseService.bookings
       .where('date')
       .between(startDate, endDate, true, true)
@@ -137,61 +140,76 @@ export class BookingsComponent {
     this.filtersService.updateTotalPay(this.paymentMethodTotal);
   }
 
-  addRow() {
-    const newRow: Booking = {
-      id: uuidv4(),
-      saleNumber: 0,
-      identifier: '',
-      name: '',
-      quantity: 0,
-      method: 'Efectivo',
-      date: this.tableDate
-    };
-    this.bookingData.push(newRow);
-    this.salesData = [];
+  async addRow() {
+    await this.querySales();
+    if (this.salesData.length > 0) {
+      const newRow: Booking = {
+        id: uuidv4(),
+        saleNumber: 0,
+        identifier: this.salesData[0].identifier,
+        name: this.salesData[0].name,
+        quantity: 0,
+        method: 'Efectivo',
+        date: this.tableDate
+      };
+      this.bookingData.push(newRow);
+      this.currentWorkingIndex = this.bookingData.length - 1;
+      this.isEditing = true;
+    }
+  }
+
+  private async querySales() {
+    this.salesData = await this.databaseService.sales
+      .where('identifier')
+      .equals(this.newPaymentIdentifier)
+      .toArray() as ClientSale[];
+    if (this.salesData.length > 0) {
+      this.salesData = await this.calculateDebt(this.salesData);
+      this.salesData[0].selected = this.salesData.length == 1;
+    }
+  }
+
+  async editRow(index: number) {
+    this.salesData = await this.databaseService.sales
+      .where('saleNumber')
+      .equals(this.bookingData[index].saleNumber)
+      .toArray() as ClientSale[];
+    if (this.salesData.length > 0) {
+      this.salesData = await this.calculateDebt(this.salesData);
+      this.salesData[0].selected = true;
+      this.currentWorkingIndex = index;
+      this.isEditing = true;
+    }
   }
 
   saveRow(index: number) {
-    if (this.identifierPresentAndSaleSelected(index)) {
+    if (this.validSaleSelected(index) && this.paymentLessThanDebt) {
       const selectedSale = this.salesData.find((sale) => sale.selected);
-      this.bookingData[index].saleNumber = selectedSale!.saleNumber;
+      if (selectedSale) {
+        this.bookingData[index].saleNumber = selectedSale!.saleNumber;
+      }
       this.databaseService.bookings.put(this.bookingData[index]);
       this.filtersService.changeRowCount(Math.random());
-    }
-    this.calculateTotal();
-  }
-
-  private identifierPresentAndSaleSelected(index: number): boolean {
-    return this.bookingData[index].identifier!.length > 0 &&
-      this.salesData.some((sale) => sale.selected);
-  }
-
-  async queryClientSalesByIdentifier(index: number) {
-    if (this.bookingData[index].identifier) {
-      this.currentWorkingIndex = index;
-      this.salesData = await this.databaseService.sales
-        .where('identifier')
-        .equals(this.bookingData[index].identifier)
-        .toArray() as ClientSale[];
-      this.salesData = await this.calculateDebt(this.salesData);
-      this.bookingData[index].name = this.salesData.length > 0 ? this.salesData[0].name : '';
-      this.salesData[0].selected = this.salesData.length == 1;
-      this.saveRow(index);
+      this.calculateTotal();
+      this.salesData = [];
+      this.isEditing = false;
     }
   }
 
-  async queryClientSalesByName(index: number) {
-    if (this.bookingData[index].name) {
-      this.currentWorkingIndex = index;
-      this.salesData = await this.databaseService.sales
-        .where('name')
-        .equals(this.bookingData[index].name)
-        .toArray() as ClientSale[];
-      this.salesData = await this.calculateDebt(this.salesData);
-      this.bookingData[index].identifier = this.salesData.length > 0 ? this.salesData[0].identifier : '';
-      this.salesData[0].selected = this.salesData.length == 1;
-      this.saveRow(index);
+  private validSaleSelected(index: number): boolean {
+    return this.salesData.some((sale) => sale.selected) ||
+      this.bookingData[index].saleNumber !== 0;
+  }
+
+  validPaymentQuantity(index: number) {
+    const selectedSale = this.salesData.find((sale) => sale.selected);
+    let balance: number = 0;
+    if (selectedSale) {
+      balance = Number(
+        bigDecimal.subtract(selectedSale.debt, this.bookingData[index].quantity)
+      );
     }
+    this.paymentLessThanDebt = balance > 0;
   }
 
   private async calculateDebt(results: Sale[]): Promise<ClientSale[]> {
@@ -199,11 +217,18 @@ export class BookingsComponent {
     for (const sale of results as Sale[]) {
       const paymentSum: number = await this.sumSalePayments(sale.saleNumber);
       const transfers: number = this.sumTransferQuantity(sale);
-      const paid: number = Number(
+      let paid: number = Number(
         bigDecimal
           .add(
             +bigDecimal.add(sale.card, sale.cash),
             +bigDecimal.add(paymentSum, transfers)
+          )
+      );
+      paid = Number(
+        bigDecimal
+          .add(
+            paid,
+            this.sumInstallmentsQuantity(sale)
           )
       );
       const due: number = Number(
@@ -240,10 +265,20 @@ export class BookingsComponent {
     return sum;
   }
 
-  selectRow(bookingIndex: number, radioIndex: number) {
+  sumInstallmentsQuantity(sale: Sale) {
+    const installments = sale.installments;
+    let sum: number = 0;
+    for (const element of installments) {
+      sum = Number(
+        bigDecimal.add(sum, element.quantity)
+      );
+    }
+    return sum;
+  }
+
+  selectRow(radioIndex: number) {
     this.salesData.forEach(sale => (sale.selected = false));
     this.salesData[radioIndex].selected = true;
-    this.saveRow(bookingIndex);
   }
 
   async getPaymentMethods() {

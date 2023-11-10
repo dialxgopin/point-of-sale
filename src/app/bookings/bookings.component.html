@@ -4,26 +4,31 @@
         <th i18n>Name</th>
         <th i18n>Quantity</th>
         <th i18n>Payment method</th>
+        <th i18n>Action</th>
     </tr>
     <tr *ngFor="let booking of bookingData; let i = index" rows>
         <td>
-            <input name="identifier" type="text" [(ngModel)]="booking.identifier"
-                (ngModelChange)="queryClientSalesByIdentifier(i)" [readonly]="isReadOnly">
+            <input name="identifier" type="text" [(ngModel)]="booking.identifier" readonly>
         </td>
         <td>
-            <input name="name" type="text" [(ngModel)]="booking.name" (ngModelChange)="queryClientSalesByName(i)"
+            <input name="name" type="text" [(ngModel)]="booking.name" readonly>
+        </td>
+        <td>
+            <input name="quantity" currencyMask [(ngModel)]="booking.quantity" (ngModelChange)="validPaymentQuantity(i)"
                 [readonly]="isReadOnly">
+            <p *ngIf="!isReadOnly && currentWorkingIndex == i && isEditing && !paymentLessThanDebt" style="color: red;"
+                i18n>Value exceeds remaining</p>
         </td>
         <td>
-            <input name="quantity" currencyMask [(ngModel)]="booking.quantity" (ngModelChange)="saveRow(i)"
-                [readonly]="isReadOnly">
-        </td>
-        <td>
-            <select [(ngModel)]="booking.method" (change)="saveRow(i)">
+            <select [(ngModel)]="booking.method" [disabled]="isReadOnly || !(currentWorkingIndex == i) || !isEditing">
                 <option value="Efectivo" i18n>Cash</option>
                 <option value="Tarjeta" i18n>Card</option>
                 <option *ngFor="let method of paymentMethods" value="{{method}}">{{method}}</option>
             </select>
+        </td>
+        <td>
+            <button *ngIf="!isReadOnly && !isEditing" (click)="editRow(i)" i18n>Edit</button>
+            <button *ngIf="!isReadOnly && currentWorkingIndex == i && isEditing" (click)="saveRow(i)" i18n>Save</button>
         </td>
     </tr>
 </app-data-table>
@@ -38,7 +43,7 @@
     </tr>
     <tr *ngFor="let sale of salesData; let j = index" rows>
         <td *ngIf="salesData.length > 1">
-            <input name="selectRow" type="radio" (click)="selectRow(currentWorkingIndex,j)" />
+            <input name="selectRow" type="radio" (click)="selectRow(j)" />
         </td>
         <td><input name="number" type="number" [value]="sale.saleNumber" readonly></td>
         <td><input name="item" type="text" [value]="sale.item" readonly></td>
@@ -57,3 +62,4 @@
     </tr>
 </app-data-table>
 <button *ngIf="!isReadOnly" (click)="addRow()" i18n>New Booking Payment</button>
+<input *ngIf="!isReadOnly" name="newPaymentIdentifier" type="text" [(ngModel)]="newPaymentIdentifier">

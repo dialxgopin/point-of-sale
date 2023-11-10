@@ -84,13 +84,91 @@ describe('BookingsComponent', () => {
     expect(component.bookingTotal.quantity).toBe(25);
   });
 
-  it('should add row', () => {
+  it('should add row', fakeAsync(() => {
+    spyOn(databaseServiceStub.sales, 'where').and.returnValue({
+      equals: () => ({
+        toArray: () => Promise.resolve([
+          {
+            id: '1',
+            saleNumber: 1,
+            identifier: 'test',
+            name: 'test',
+            item: 'Item1',
+            price: 110,
+            card: 5,
+            cash: 5,
+            transfer: [{ quantity: 0, method: 'Method 1' }],
+            installments: [{ quantity: 0, method: 'Method 2' }],
+            date: new Date()
+          }
+        ]),
+      }),
+    });
+    spyOn(databaseServiceStub.bookings, 'where').and.returnValue({
+      between: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+      equals: () => ({
+        toArray: () => Promise.resolve([
+          { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() },
+          { id: '2', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() }
+        ]),
+      }),
+    });
     component.addRow();
+    tick();
     expect(component.bookingData.length).toBe(1);
+  }));
+
+  it('should set isEditing to true and populate salesData when calling editRow', async () => {
+    component.bookingData = [
+      { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: 'Efectivo', date: new Date() },
+      { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 15, method: 'Tarjeta', date: new Date() },
+    ];
+    spyOn(databaseServiceStub.sales, 'where').and.returnValue({
+      equals: () => ({
+        toArray: () => Promise.resolve([
+          {
+            id: '1',
+            saleNumber: 1,
+            identifier: 'test',
+            name: 'test',
+            item: 'Item1',
+            price: 110,
+            card: 5,
+            cash: 5,
+            transfer: [{ quantity: 0, method: 'Method 1' }],
+            installments: [{ quantity: 0, method: 'Method 2' }],
+            date: new Date()
+          }
+        ]),
+      }),
+    });
+    spyOn(databaseServiceStub.bookings, 'where').and.returnValue({
+      between: () => ({
+        toArray: () => Promise.resolve([]),
+      }),
+      equals: () => ({
+        toArray: () => Promise.resolve([
+          { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() },
+          { id: '2', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() }
+        ]),
+      }),
+    });
+    await component.editRow(0);
+    expect(component.isEditing).toBeTrue();
+    expect(component.currentWorkingIndex).toBe(0);
+    expect(component.salesData.length).toBe(1);
+    expect(component.salesData[0].selected).toBeTrue();
   });
 
   it('should save row', fakeAsync(() => {
     component.addRow();
+    component.bookingData = [
+      { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: 'Efectivo', date: new Date() },
+      { id: '2', saleNumber: 1, identifier: 'test', name: 'test', quantity: 15, method: 'Tarjeta', date: new Date() },
+      { id: '2', saleNumber: 1, identifier: 'test', name: 'test', quantity: 15, method: 'Banco', date: new Date() },
+    ];
     component.bookingData[0].identifier = 'some-identifier';
     component.salesData = [{
       id: '1',
@@ -112,79 +190,29 @@ describe('BookingsComponent', () => {
     expect(spyDatabasePut).toHaveBeenCalled();
   }));
 
-  it('should query client sales by identifier', fakeAsync(() => {
-    component.bookingData = [{ id: '1', saleNumber: 1, identifier: 'test', name: '', quantity: 0, method: '', date: new Date() }];
-    const spySalesWhere = spyOn(databaseServiceStub.sales, 'where').and.returnValue({
-      equals: () => ({
-        toArray: () => Promise.resolve([
-          {
-            id: '1',
-            saleNumber: 1,
-            identifier: 'test',
-            name: 'test',
-            item: 'Item1',
-            price: 110,
-            card: 5,
-            cash: 5,
-            transfer: [{ quantity: 0, method: 'Method 1' }],
-            installments: [{ quantity: 100, method: 'Method 2' }],
-            date: new Date()
-          }
-        ]),
-      }),
-    });
-    spyOn(databaseServiceStub.bookings, 'where').and.returnValue({
-      between: () => ({
-        toArray: () => Promise.resolve([]),
-      }),
-      equals: () => ({
-        toArray: () => Promise.resolve([
-          { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() },
-          { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() }
-        ]),
-      }),
-    });
-    component.queryClientSalesByIdentifier(0);
-    tick();
-    expect(spySalesWhere).toHaveBeenCalled();
-  }));
-
-  it('should query client sales by name', fakeAsync(() => {
-    component.bookingData = [{ id: '1', saleNumber: 1, identifier: '', name: 'test', quantity: 0, method: '', date: new Date() }];
-    const spySalesWhere = spyOn(databaseServiceStub.sales, 'where').and.returnValue({
-      equals: () => ({
-        toArray: () => Promise.resolve([
-          {
-            id: '1',
-            saleNumber: 1,
-            identifier: 'test',
-            name: 'test',
-            item: 'Item1',
-            price: 110,
-            card: 5,
-            cash: 5,
-            transfer: [{ quantity: 0, method: 'Method 1' }],
-            installments: [{ quantity: 100, method: 'Method 2' }],
-            date: new Date()
-          }
-        ]),
-      }),
-    });
-    spyOn(databaseServiceStub.bookings, 'where').and.returnValue({
-      between: () => ({
-        toArray: () => Promise.resolve([]),
-      }),
-      equals: () => ({
-        toArray: () => Promise.resolve([
-          { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() },
-          { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 10, method: '', date: new Date() }
-        ]),
-      }),
-    });
-    component.queryClientSalesByName(0);
-    tick();
-    expect(spySalesWhere).toHaveBeenCalled();
-  }));
+  it('should set paymentLessThanDebt to true when quantity is less than debt', async () => {
+    component.bookingData = [
+      { id: '1', saleNumber: 1, identifier: 'test', name: 'test', quantity: 10, method: 'Efectivo', date: new Date() },
+      { id: '2', saleNumber: 2, identifier: 'test', name: 'test', quantity: 15, method: 'Tarjeta', date: new Date() },
+    ];
+    component.salesData = [{
+      id: '1',
+      saleNumber: 1,
+      identifier: 'test',
+      name: 'test',
+      item: 'Item1',
+      price: 10,
+      card: 5,
+      cash: 5,
+      transfer: [{ quantity: 0, method: 'Method 1' }],
+      installments: [{ quantity: 0, method: 'Method 2' }],
+      date: new Date(),
+      selected: true,
+      debt: 100
+    }];
+    component.validPaymentQuantity(0);
+    expect(component.paymentLessThanDebt).toBeTrue();
+  });
 
   it('should select row', fakeAsync(() => {
     component.salesData = [
@@ -203,18 +231,7 @@ describe('BookingsComponent', () => {
         selected: false
       }
     ];
-    component.bookingData = [
-      {
-        id: 'string',
-        saleNumber: 1,
-        identifier: 'string',
-        name: 'string',
-        quantity: 1,
-        method: '',
-        date: new Date()
-      }
-    ];
-    component.selectRow(0, 0);
+    component.selectRow(0);
     expect(component.salesData[0].selected).toBeTruthy();
   }));
 
