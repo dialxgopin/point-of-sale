@@ -15,7 +15,7 @@
         </td>
         <td>
             <input name="quantity" currencyMask [(ngModel)]="booking.quantity" (ngModelChange)="validPaymentQuantity(i)"
-                [readonly]="isReadOnly">
+                [readonly]="isReadOnly || !(currentWorkingIndex == i) || !isEditing">
             <p *ngIf="!isReadOnly && currentWorkingIndex == i && isEditing && !paymentLessThanDebt" style="color: red;"
                 i18n>Value exceeds remaining</p>
         </td>
