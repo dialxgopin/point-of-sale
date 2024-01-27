@@ -56,12 +56,18 @@ export class ReportsComponent {
         this.dateRange.startDate = new Date(
           this.dateRange.startDate.getFullYear(),
           this.dateRange.startDate.getMonth(),
-          this.dateRange.startDate.getDate()
+          this.dateRange.startDate.getDate(),
+          0,
+          0,
+          1
         );
         this.dateRange.endDate = new Date(
           this.dateRange.endDate.getFullYear(),
           this.dateRange.endDate.getMonth(),
-          this.dateRange.endDate.getDate() + 1
+          this.dateRange.endDate.getDate(),
+          23,
+          59,
+          59
         );
         this.refreshDataFromDatabase();
       }

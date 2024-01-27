@@ -85,12 +85,18 @@ export class BookingsComponent {
     const startDate = new Date(
       this.tableDate.getFullYear(),
       this.tableDate.getMonth(),
-      this.tableDate.getDate()
+      this.tableDate.getDate(),
+      0,
+      0,
+      1
     );
     const endDate = new Date(
       this.tableDate.getFullYear(),
       this.tableDate.getMonth(),
-      this.tableDate.getDate() + 1
+      this.tableDate.getDate(),
+      23,
+      59,
+      59
     );
     this.bookingData = await this.databaseService.bookings
       .where('date')
@@ -209,7 +215,7 @@ export class BookingsComponent {
         bigDecimal.subtract(selectedSale.debt, this.bookingData[index].quantity)
       );
     }
-    this.paymentLessThanDebt = balance > 0;
+    this.paymentLessThanDebt = balance >= 0;
   }
 
   private async calculateDebt(results: Sale[]): Promise<ClientSale[]> {

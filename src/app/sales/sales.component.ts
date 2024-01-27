@@ -144,12 +144,18 @@ export class SalesComponent {
     const startDate = new Date(
       this.tableDate.getFullYear(),
       this.tableDate.getMonth(),
-      this.tableDate.getDate()
+      this.tableDate.getDate(),
+      0,
+      0,
+      1
     );
     const endDate = new Date(
       this.tableDate.getFullYear(),
       this.tableDate.getMonth(),
-      this.tableDate.getDate() + 1
+      this.tableDate.getDate(),
+      23,
+      59,
+      59
     );
 
     this.salesData = await this.databaseService.sales
