@@ -59,7 +59,7 @@ export class ReportsComponent {
           this.dateRange.startDate.getDate(),
           0,
           0,
-          1
+          0
         );
         this.dateRange.endDate = new Date(
           this.dateRange.endDate.getFullYear(),

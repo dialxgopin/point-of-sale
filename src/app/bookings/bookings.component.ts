@@ -88,7 +88,7 @@ export class BookingsComponent {
       this.tableDate.getDate(),
       0,
       0,
-      1
+      0
     );
     const endDate = new Date(
       this.tableDate.getFullYear(),
